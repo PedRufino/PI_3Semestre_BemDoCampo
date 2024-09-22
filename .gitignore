@@ -32,3 +32,6 @@ venv.bak.bak/
 
 # pytest
 .pytest_cache/
+
+# migrations
+migrations/
