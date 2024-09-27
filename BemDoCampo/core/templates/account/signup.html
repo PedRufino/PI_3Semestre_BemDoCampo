@@ -1,8 +1,7 @@
 {% extends "account/base_entrance.html" %}
-{% load i18n %}
-{% load allauth account %}
+{% load allauth i18n %}
 {% block head_title %}
-    {% trans "Bem do Campo | Login" %}
+    {% trans "Bem do Campo | Cadastro" %}
 {% endblock head_title %}
 {% block content %}
     <section class="bg-light d-flex justify-content-center align-items-center vh-100">
@@ -11,56 +10,66 @@
                 <div class="col-12 col-xxl-11">
                     <div class="card border-light-subtle shadow-sm">
                         <div class="row g-0">
-                            <div class="col-12 col-md-6">
-                                <img class="img-fluid rounded-start w-100 h-100 object-fit-cover" loading="lazy"
-                                    src="https://encurtador.com.br/6QW3T" alt="Que bom tê-lo de volta! Sentimos sua falta!">
-                            </div>
                             <div class="col-12 col-md-6 d-flex align-items-center justify-content-center">
                                 <div class="col-12 col-lg-11 col-xl-10">
                                     <div class="card-body p-3 p-md-4 p-xl-5">
                                         <div class="row">
                                             <div class="col-12">
-                                                <div class="mb-5">
+                                                <div class="mb-4">
                                                     <div class="text-center mb-4">
                                                         <a href="#!">
                                                             <img src="#"
                                                                 alt="Bem Do Campo" width="175" height="57">
                                                         </a>
                                                     </div>
-                                                    <h4 class="text-center">Que bom tê-lo de volta! <br> Sentimos sua falta!</h4>
+                                                    <h4 class="text-center">Seja bem-vindo!</h4>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="d-flex gap-3 flex-column">
-                                                    <a href="/accounts/google/login/?process=login" class="btn btn-lg btn-outline-dark">
+                                                    <a href="/accounts/google/login/?process=signup" class="btn btn-lg btn-outline-dark">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                             fill="currentColor" class="bi bi-google"
                                                             viewBox="0 0 16 16">
                                                             <path
                                                                 d="M15.545 6.558a9.42 9.42 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.689 7.689 0 0 1 5.352 2.082l-2.284 2.284A4.347 4.347 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.792 4.792 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.702 3.702 0 0 0 1.599-2.431H8v-3.08h7.545z" />
                                                         </svg>
-                                                        <span class="ms-2 fs-6">Entrar com o Google</span>
+                                                        <span class="ms-2 fs-6">Cadastrar com o Google</span>
                                                     </a>
                                                 </div>
-                                                <p class="text-center mt-4 mb-4">Ou entre com</p>
+                                                <p class="text-center mt-4 mb-4">Ou cadastre-se com</p>
                                             </div>
                                         </div>
                                         {% if not SOCIALACCOUNT_ONLY %}
-                                            {% url 'account_login' as login_url %}
-                                            <form method="post" action="{{ login_url }}" tags="entrance,login">
+                                            {% url 'account_signup' as signup_url %}
+                                            <form method="post" action="{{ signup_url }}" tags="entrance,signup">
                                                 {% csrf_token %}
                                                 <div class="row gy-3 overflow-hidden">
+                                                    <!-- Campo de Nome -->
+                                                    <div class="col-12">
+                                                        <div class="form-floating mb-3">
+                                                            <input type="text" class="form-control" name="username" id="username" value="{{ form.username.value|default_if_none:'' }}" placeholder="Paula Tejano" required>
+                                                            <label for="username" class="form-label">Nome</label>
+                                                            <!-- Exibir erro de validação do campo username -->
+                                                            {% if form.username.errors %}
+                                                                <div class="text-danger">
+                                                                    {{ form.username.errors }}
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+
                                                     <!-- Campo de Email -->
                                                     <div class="col-12">
                                                         <div class="form-floating mb-3">
-                                                            <input type="email" class="form-control" name="login" id="email" placeholder="name@example.com" value="{{ form.login.errors }}" required>
+                                                            <input type="email" class="form-control" name="email" id="email" placeholder="name@example.com" value="{{ form.email.value|default_if_none:'' }}" required>
                                                             <label for="email" class="form-label">Email</label>
                                                             <!-- Exibir erro de validação do campo email -->
-                                                            {% if form.login.errors %}
+                                                            {% if form.email.errors %}
                                                                 <div class="text-danger">
-                                                                    {{ form.login.errors }}
+                                                                    {{ form.email.errors }}
                                                                 </div>
                                                             {% endif %}
                                                         </div>
@@ -69,12 +78,26 @@
                                                     <!-- Campo de Senha -->
                                                     <div class="col-12">
                                                         <div class="form-floating mb-3">
-                                                            <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
-                                                            <label for="password" class="form-label">Senha</label>
+                                                            <input type="password" class="form-control" name="password1" id="password1" placeholder="Password" required>
+                                                            <label for="password1" class="form-label">Senha</label>
                                                             <!-- Exibir erro de validação do campo password -->
-                                                            {% if form.password.errors %}
+                                                            {% if form.password1.errors %}
                                                                 <div class="text-danger">
-                                                                    {{ form.password.errors }}
+                                                                    {{ form.password1.errors }}
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Confirmar Senha -->
+                                                    <div class="col-12">
+                                                        <div class="form-floating mb-3">
+                                                            <input type="password" class="form-control" name="password2" id="password2" placeholder="Confirmar Senha" required>
+                                                            <label for="password2" class="form-label">Confirmar Senha</label>
+                                                            <!-- Exibir erro de validação do campo password2 -->
+                                                            {% if form.password2.errors %}
+                                                                <div class="text-danger">
+                                                                    {{ form.password2.errors }}
                                                                 </div>
                                                             {% endif %}
                                                         </div>
@@ -83,7 +106,7 @@
                                                     <!-- Botão de Submissão -->
                                                     <div class="col-12">
                                                         <div class="d-grid">
-                                                            <button class="btn btn-dark btn-lg" type="submit">{% trans "Entrar" %}</button>
+                                                            <button class="btn btn-dark btn-lg" type="submit">{% trans "Cadastrar" %}</button>
                                                         </div>
                                                     </div>
                                             
@@ -95,14 +118,17 @@
                                         <div class="row">
                                             <div class="col-12">
                                                 <div
-                                                    class="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-center mt-5">
-                                                    <a href="{% url 'account_signup' %}" class="link-secondary text-decoration-none">Criar nova conta</a>
-                                                    <a href="{% url 'account_reset_password' %}" class="link-secondary text-decoration-none">Esqueceu sua senha?</a>
+                                                    class="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-center mt-4">
+                                                    <a href="{% url 'account_login' %}" class="link-secondary text-decoration-none">Já tem uma conta? Entrar</a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <img class="img-fluid rounded-start w-100 h-100 object-fit-cover" loading="lazy"
+                                    src="https://encurtador.com.br/tPk2X" alt="Seja bem-vindo! Estamos animados para te ver por aqui!">
                             </div>
                         </div>
                     </div>
@@ -110,25 +136,11 @@
             </div>
         </div>
     </section>
-    {% if LOGIN_BY_CODE_ENABLED or PASSKEY_LOGIN_ENABLED %}
-        <hr>
-        <div class="button_group vertical">
-            {% if PASSKEY_LOGIN_ENABLED %}
-                <button class="btn btn-primary" type="submit" form="mfa_login" id="passkey_login">
-                    {% trans "Sign in with a passkey" %}
-                </button>
-            {% endif %}
-            {% if LOGIN_BY_CODE_ENABLED %}
-                <a class="btn btn-primary" href="{{ request_login_code_url }}">
-                    {% trans "Mail me a sign-in code" %}
-                </a>
-            {% endif %}
-        </div>
+    {% if PASSKEY_SIGNUP_ENABLED %}
+        {% element hr %}
+        {% endelement %}
+        {% element button href=signup_by_passkey_url tags="prominent,signup,outline,primary" %}
+            {% trans "Sign up using a passkey" %}
+        {% endelement %}
     {% endif %}
 {% endblock content %}
-{% block extra_body %}
-    {{ block.super }}
-    {% if PASSKEY_LOGIN_ENABLED %}
-        {% include "mfa/webauthn/snippets/login_script.html" with button_id="passkey_login" %}
-    {% endif %}
-{% endblock %}
