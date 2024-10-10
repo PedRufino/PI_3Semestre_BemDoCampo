@@ -50,12 +50,26 @@
                                                     <!-- Campo de Nome -->
                                                     <div class="col-12">
                                                         <div class="form-floating mb-3">
-                                                            <input type="text" class="form-control" name="username" id="username" value="{{ form.username.value|default_if_none:'' }}" placeholder="Paula Tejano" required>
-                                                            <label for="username" class="form-label">Nome</label>
-                                                            <!-- Exibir erro de validação do campo username -->
-                                                            {% if form.username.errors %}
+                                                            <input type="text" class="form-control" name="first_name" id="first_name" value="{{ form.first_name.value|default_if_none:'' }}" placeholder="Paula" required>
+                                                            <label for="first_name" class="form-label">Nome</label>
+                                                            <!-- Exibir erro de validação do campo nome -->
+                                                            {% if form.first_name.errors %}
                                                                 <div class="text-danger">
-                                                                    {{ form.username.errors }}
+                                                                    {{ form.first_name.errors }}
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Campo de Sobrenome -->
+                                                    <div class="col-12">
+                                                        <div class="form-floating mb-3">
+                                                            <input type="text" class="form-control" name="last_name" id="last_name" value="{{ form.last_name.value|default_if_none:'' }}" placeholder="Tejano" required>
+                                                            <label for="last_name" class="form-label">Sobrenome</label>
+                                                            <!-- Exibir erro de validação do campo sobrenome -->
+                                                            {% if form.last_name.errors %}
+                                                                <div class="text-danger">
+                                                                    {{ form.last_name.errors }}
                                                                 </div>
                                                             {% endif %}
                                                         </div>
