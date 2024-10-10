@@ -41,11 +41,13 @@ INSTALLED_APPS = [
     
     # Apps
     'core',
+    'usuarios',
     
     # AllAuth
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    
     # providers
     'allauth.socialaccount.providers.google',
 ]
@@ -156,6 +158,10 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
+
+ACCOUNT_FORMS = {
+    'signup': 'usuarios.forms.CustomSignupForm',
+}
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
