@@ -103,7 +103,7 @@ DATABASES = {
         'NAME': os.getenv('DATABASE'),
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
-            'host': f'mongodb://{os.getenv('HOST')}:{os.getenv('PORT')}',
+            'host': f"mongodb://{os.getenv('HOST')}:{os.getenv('PORT')}",
         }
     }
 }
@@ -145,8 +145,11 @@ USE_TZ = True
 
 print(os.path.join(BASE_DIR, 'assets/static'))
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'assets')]
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'assets'),
+    os.path.join(BASE_DIR, 'usuarios/static'),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
