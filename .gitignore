@@ -35,3 +35,6 @@ venv.bak.bak/
 
 # migrations
 migrations/
+
+# Configuraçoes
+.env
