@@ -1,23 +1,29 @@
+import uuid
 from django.db import models
 from datetime import datetime
-# Create your models here.
 
-from mongoengine import Document, StringField, IntField, ListField, DictField, DateTimeField
-import datetime
+# class Localizacao(models.Model):
+#     cidade = models.CharField(max_length=100, blank=False)
+#     estado = models.CharField(max_length=100, blank=False)
 
-class Localizacao(Document):
-    cidade = StringField(required=True)
-    estado = StringField(required=True)
+    # def __str__(self):
+    #     return f"{self.cidade}, {self.estado}"
 
-class Alimento(Document):
-    alimento_id = StringField(required=True)
-    nome = StringField(required=True)
-    tipo = StringField(required=True)
-    quantidade = IntField(required=True)
-    unidade = StringField(required=True)
-    descricao = StringField()
-    produtor_id = StringField(required=True)
-    localizacao = DictField()  # pode ser Localizacao() se preferir usar o modelo separado
-    imagem_capa = StringField()
-    imagens = ListField(StringField())
-    data_cadastro = DateTimeField(default=datetime.datetime.utcnow)
+class Produtos(models.Model):
+    
+    nome = models.CharField(max_length=100, blank=False)
+    tipo = models.CharField(max_length=100, blank=False)
+    quantidade = models.IntegerField(blank=False)
+    unidade = models.CharField(max_length=50, blank=False)
+    descricao = models.TextField(blank=True)
+    produtor_id = models.CharField(max_length=100, blank=False)
+    imagem_capa = models.URLField(blank=True)
+    imagens = models.JSONField(blank=True, default=list)
+    data_cadastro = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'produtos'  # Nome da coleção no MongoDB
+        managed = False  # Para não tentar gerenciar as migrações do Django
+
+    def __str__(self):
+        return self.nome
