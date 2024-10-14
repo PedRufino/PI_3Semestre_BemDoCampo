@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     # Apps
     'core',
     'usuarios',
+    'fontawesomefree',
     
     # AllAuth
     'allauth',
@@ -160,7 +161,7 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # Variaveis AllAuth
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/usuario/profile'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'account_login'
 ACCOUNT_SIGNUP_REDIRECT_URL = 'account_login'
 

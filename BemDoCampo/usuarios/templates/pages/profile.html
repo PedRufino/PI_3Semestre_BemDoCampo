@@ -1,0 +1,137 @@
+{% extends "layouts/default_dashboard.html" %}
+{% load static %}
+
+{% block title %}Soft UI Dashboard by Creative Tim{% endblock %}
+
+{% block body %}
+  <div class="container-fluid">
+    <div class="page-header min-height-100 border-radius-xl mt-4">
+      <span class="mask bg-gradient-primary opacity-6"></span>
+    </div>
+    <div class="card card-body blur shadow-blur mx-4 mt-n6 overflow-hidden">
+      <div class="row gx-4">
+        <div class="col-auto">
+          <div class="avatar avatar-xl position-relative">
+            <img src="../assets/img/bruce-mars.jpg" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+          </div>
+        </div>
+        <div class="col-auto my-auto">
+          <div class="h-100">
+            <h5 class="mb-1">
+              {{ first_name }} {{ last_name }}
+            </h5>
+            <p class="mb-0 font-weight-bold text-sm">
+              CEO / Co-Founder
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12 col-xl-12">
+        <div class="card h-100">
+          <div class="card-header pb-0 p-3">
+            <h6 class="mb-0">Platform Settings</h6>
+          </div>
+          <div class="card-body p-3">
+            <form method="POST" action="{% url 'profile' %}" enctype="multipart/form-data">
+              {% csrf_token %}
+              <input type="hidden" name="user_id" value="{{ user_id }}">
+              <div class="row">
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="name-input" class="form-control-label">Nome</label>
+                          <input class="form-control" type="text" value="{{ first_name }}" name="nome" placeholder="John" id="name-input">
+                      </div>
+                  </div>
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="lastname-input" class="form-control-label">Sobrenome</label>
+                          <input class="form-control" type="text" value="{{ last_name }}" name="sobrenome" placeholder="Snow" id="lastname-input">
+                      </div>
+                  </div>
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="email-input" class="form-control-label">Email</label>
+                          <input class="form-control" type="email" value="{{ email }}" name="email" placeholder="@example.com" id="email-input">
+                      </div>
+                  </div>
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="document-input" class="form-control-label">Documento</label>
+                          <input class="form-control" type="text" value="{{ document }}" name="documento" id="document-input" maxlength="14" placeholder="CPF / CNPJ">
+                      </div>
+                  </div>
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="tel-input" class="form-control-label">Contato</label>
+                          <input class="form-control" type="text" value="{{ contact }}" name="contato" maxlength="14" placeholder="(00) 00000-0000" id="tel-input">
+                      </div>
+                  </div>
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="date-input" class="form-control-label">Data de Nascimento</label>
+                          <input class="form-control" type="text" value="{{ dt_nasc }}" name="data_nascimento" placeholder="dd/mm/aaaa" id="date-input">
+                      </div>
+                  </div>
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="cep-input" class="form-control-label">CEP</label>
+                          <input class="form-control" maxlength="8" value="{{ cep }}" type="text" name="cep" placeholder="00000-000" id="cep-input">
+                      </div>
+                  </div>
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="logradouro-input" class="form-control-label">Endereço</label>
+                          <input class="form-control" type="text" value="{{ endereco }}" name="endereco" placeholder="Rua Jacinto Pinto" id="logradouro-input">
+                      </div>
+                  </div>
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="num-endereco-input" class="form-control-label">Número</label>
+                          <input class="form-control" type="text" value="{{ number }}" name="numero" placeholder="69" id="num-endereco-input">
+                      </div>
+                  </div>
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="bairro-input" class="form-control-label">Bairro</label>
+                          <input class="form-control" type="text" value="{{ bairro }}" name="bairro" placeholder="São João da Gala" id="bairro-input">
+                      </div>
+                  </div>
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="cidade-input" class="form-control-label">Cidade</label>
+                          <input class="form-control" type="text" value="{{ cidade }}" name="cidade" placeholder="Cubatão" id="cidade-input">
+                      </div>
+                  </div>
+                  <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="estado-input" class="form-control-label">Estado</label>
+                          <input class="form-control" maxlength="2" value="{{ estado }}" type="text" name="estado" placeholder="SP" id="estado-input">
+                      </div>
+                  </div>
+                  <div class="col-md-12 text-end">
+                      <button type="submit" class="btn bg-gradient-info m-0">Atualizar Cadastro</button>
+                  </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'usuarios/js/mask_bemdocampo.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    mask_document('#document-input');
+    mask_contato('#tel-input');
+    mask_date('#date-input');
+    mask_cep('#cep-input');
+    busca_cep('#cep-input')
+  });
+</script>
+{% endblock %}
