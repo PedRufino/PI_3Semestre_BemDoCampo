@@ -114,15 +114,3 @@ class ProfileForm(forms.ModelForm):
         for field in self.fields:
             if isinstance(self.user_data, dict) and field in self.user_data:
                 self.fields[field].initial = self.user_data[field]
-    
-    def save(self, commit=True, using=None):
-        # Cria a instância do modelo com os dados do formulário, mas sem salvar ainda
-        instance = super().save(commit=False)
-
-        # Salvar no banco de dados correto baseado no valor de 'using'
-        if using == 'mongo':  # Salva no MongoDB se 'using' for 'mongo'
-            instance.save(using='mongo')
-        elif commit:
-            instance.save(using='default')  # Salva no banco padrão (SQLite ou outro definido no settings)
-
-        return instance
