@@ -59,6 +59,17 @@ function mask_date(id) {
     });
 }
 
+function mask_money(id) {
+    $(document).ready(function(){
+        var documentInput = $(id);
+        
+        documentInput.on('input', function() {
+            var val = $(this).val().replace(/\D/g, '');
+            $(this).mask('000.000.000.000.000,00', {reverse: true});
+        });
+    });
+}
+
 function mask_cep(id) {
     $(document).ready(function(){
         var documentInput = $(id);

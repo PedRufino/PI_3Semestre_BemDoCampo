@@ -1,0 +1,160 @@
+{% extends "layouts/default_dashboard.html" %}
+{% load static %}
+
+{% block title %}Estoque de Produtos{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="page-header min-height-100 border-radius-xl mt-4">
+        <span class="mask bg-gradient-primary opacity-6"></span>
+    </div>
+    <div class="card card-body blur shadow-blur mx-4 mt-n6 overflow-hidden">
+        <div class="row gx-4">
+            <div class="col-auto">
+                <div class="avatar avatar-xl position-relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="50" width="50"
+                        viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                        <path fill="#334666"
+                            d="M248 0L208 0c-26.5 0-48 21.5-48 48l0 112c0 35.3 28.7 64 64 64l128 0c35.3 0 64-28.7 64-64l0-112c0-26.5-21.5-48-48-48L328 0l0 80c0 8.8-7.2 16-16 16l-48 0c-8.8 0-16-7.2-16-16l0-80zM64 256c-35.3 0-64 28.7-64 64L0 448c0 35.3 28.7 64 64 64l160 0c35.3 0 64-28.7 64-64l0-128c0-35.3-28.7-64-64-64l-40 0 0 80c0 8.8-7.2 16-16 16l-48 0c-8.8 0-16-7.2-16-16l0-80-40 0zM352 512l160 0c35.3 0 64-28.7 64-64l0-128c0-35.3-28.7-64-64-64l-40 0 0 80c0 8.8-7.2 16-16 16l-48 0c-8.8 0-16-7.2-16-16l0-80-40 0c-15 0-28.8 5.1-39.7 13.8c4.9 10.4 7.7 22 7.7 34.2l0 160c0 12.2-2.8 23.8-7.7 34.2C323.2 506.9 337 512 352 512z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="col-auto my-auto p-0">
+                <div class="h-100">
+                    <h3 class="mb-1">
+                        Estoque de Produtos
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid py-4">
+    <div class="row mt-4">
+        <div class="col-lg-12">
+            <div class="card z-index-2">
+                <div class="card-body p-3">
+                    <div class="table-responsive">
+                        <table id="datatable-basic" class="table align-items-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Imagem do Produto
+                                    </th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        Nome do Produto
+                                    </th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Status do Produto
+                                    </th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Tipo do Produto
+                                    </th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Quantidade
+                                    </th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Preço do Produto
+                                    </th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Unidade de Medida
+                                    </th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Descrição do Produto
+                                    </th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Data do Cadastro
+                                    </th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Ações
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for produto in produtos %}
+                                    <tr>
+                                        <td>
+                                            <div class="align-middle text-center text-sm">
+                                                <img src="{{ produto.imagem_capa.url }}" alt="{{ produto.nome }}" class="avatar avatar-sm me-3">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">
+                                                {{produto.nome}}
+                                            </p>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            {% if produto.quantidade != 0 %}
+                                                <span class="badge bg-gradient-success">
+                                                    Online
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-gradient-danger">
+                                                    Offline
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="align-middle">
+                                            <span class="text-secondary text-xs font-weight-bold">
+                                                {{ produto.tipo_produto }}
+                                            </span>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <span class="text-secondary text-xs font-weight-bold">
+                                                {{ produto.quantidade }}
+                                            </span>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <span class="text-secondary text-xs font-weight-bold">
+                                                R$ {{ produto.valor }}
+                                            </span>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <span class="text-secondary text-xs font-weight-bold">
+                                                {{ produto.tipo_unidade }}
+                                            </span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <span style="width: 350px; white-space: normal; display: block;" class="text-secondary text-xs font-weight-bold">
+                                                {{ produto.descricao }}
+                                            </span>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <span id="data-input" class="text-secondary text-xs font-weight-bold">
+                                                {{ produto.data_cadastro|date:"Y-m-d" }}
+                                            </span>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <a href="{% url 'edit_product' produto.produto_id %}" class="btn bg-gradient-info btn-sm">Editar</a>
+                                            <a href="{% url 'delete_product' produto.produto_id %}" class="btn bg-gradient-danger btn-sm">Apagar</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.js"></script>
+<script>
+    Object.assign(DataTable.defaults, {
+        searching: true,
+        ordering: true,
+    });
+
+    new DataTable('#datatable-basic', {
+        language: {
+            info: 'Total de _MAX_ produtos registrados.',
+            lengthMenu: '<div class="card-header p-0"><h6>Lista de Produtos</h6></div>',
+        },
+        order: [[8, 'desc']],
+    });
+</script>
+{% endblock %}

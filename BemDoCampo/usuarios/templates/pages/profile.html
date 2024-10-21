@@ -1,7 +1,7 @@
 {% extends "layouts/default_dashboard.html" %}
 {% load static %}
 
-{% block title %}Soft UI Dashboard by Creative Tim{% endblock %}
+{% block title %}Informações Pessoais{% endblock %}
 
 {% block body %}
   <div class="container-fluid">
@@ -18,7 +18,7 @@
         <div class="col-auto my-auto">
           <div class="h-100">
             <h5 class="mb-1">
-              {{ first_name }} {{ last_name }}
+              {{ user_data.nome }} {{ user_data.sobrenome }}
             </h5>
             <p class="mb-0 font-weight-bold text-sm">
               Consumidor
