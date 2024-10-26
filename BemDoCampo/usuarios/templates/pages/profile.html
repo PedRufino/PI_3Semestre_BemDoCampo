@@ -12,7 +12,11 @@
       <div class="row gx-4">
         <div class="col-auto">
           <div class="avatar avatar-xl position-relative">
-            <img src="../assets/img/bruce-mars.jpg" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+            {% if user_data.imagem_perfil %}
+              <img src="{{ user_data.imagem_perfil.url }}" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+            {% else %}
+              <img src="/media/NoPhotoUser.png" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+            {% endif %}
           </div>
         </div>
         <div class="col-auto my-auto">
@@ -28,6 +32,7 @@
       </div>
     </div>
   </div>
+  
   <div class="container-fluid py-4">
     <div class="row">
       <div class="col-12 col-xl-12">
@@ -110,6 +115,12 @@
                     <div class="form-group">
                         {{ form.estado.label_tag }}
                         {{ form.estado }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.imagem_perfil.label_tag }}
+                        {{ form.imagem_perfil }}
                     </div>
                 </div>
                 <div class="col-md-12 text-end">

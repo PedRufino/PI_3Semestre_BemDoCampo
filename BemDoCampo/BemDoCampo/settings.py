@@ -166,7 +166,8 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # Variaveis AllAuth
 
-LOGIN_REDIRECT_URL = '/usuario/profile'
+LOGIN_URL = '/accounts/login'
+LOGIN_REDIRECT_URL = '/usuario/perfil'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'account_login'
 ACCOUNT_SIGNUP_REDIRECT_URL = 'account_login'
 

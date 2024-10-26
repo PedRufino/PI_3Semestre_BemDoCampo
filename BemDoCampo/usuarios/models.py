@@ -18,7 +18,7 @@ class Usuarios(models.Model):
     bairro = models.CharField(max_length=100, blank=False)
     cidade = models.CharField(max_length=100, blank=False)
     estado = models.CharField(max_length=2, blank=False)
-    imagem_perfil = models.URLField(blank=True)
+    imagem_perfil = models.FileField(blank=True)
     data_cadastro = models.DateTimeField(default=DATE_NOW)
 
     class Meta:

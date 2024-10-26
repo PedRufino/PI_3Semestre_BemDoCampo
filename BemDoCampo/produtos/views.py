@@ -6,17 +6,18 @@ from django.shortcuts import (
     render
 )
 
-from django.conf import settings
+from .imagens import MediaRecords
 from django.views import View
 from . import models
 from . import forms
 import uuid
-import os
 
 
-@method_decorator(login_required(login_url='/accounts/login'), name='dispatch')
+@method_decorator(login_required(), name='dispatch')
 class ProductsView(View):
     template_name = 'products.html'
+    media = MediaRecords()
+
     
     def get(self, request, produto_id=None):
         product=None
@@ -63,30 +64,13 @@ class ProductsView(View):
         
         nova_imagem = request.FILES.get('imagem_capa')
         if nova_imagem:
-            novos_dados['imagem_capa'] = self.caminho_imagem(nova_imagem, produto_id, request.user.id)
+            novos_dados['imagem_capa'] = self.media.image_path(nova_imagem, produto_id, request.user.id)
         
         models.Produtos.objects.using('mongo').filter(produto_id=produto_id).update(**novos_dados)
-    
-    def caminho_imagem(self, imagem, produto_id, user_id):
-        if not imagem:
-            return "/NoPhoto.jpg"
-        
-        extensao = imagem.name.split('.')[-1]
-        nome_arquivo = f"{produto_id}.{extensao}"
-
-        caminho_imagem = os.path.join(settings.MEDIA_ROOT, str(user_id), "prod_img", nome_arquivo)
-
-        os.makedirs(os.path.dirname(caminho_imagem), exist_ok=True)
-
-        with open(caminho_imagem, 'wb+') as destination:
-            for chunk in imagem.chunks():
-                destination.write(chunk)
-        
-        return f"{user_id}/prod_img/{nome_arquivo}"
 
     def cadastar_produto(self, request, form, user_id, valor):
         produto_id = uuid.uuid4()
-        caminho = self.caminho_imagem(
+        caminho = self.media.image_path(
             request.FILES.get('imagem_capa'),
             produto_id,
             user_id
@@ -105,17 +89,19 @@ class ProductsView(View):
         )
     
 
-@method_decorator(login_required(login_url='/accounts/login'), name='dispatch')
+@method_decorator(login_required(), name='dispatch')
 class StockView(View):
     template_name = 'stock.html'
+    media = MediaRecords()
+    
     
     def get(self, request, produto_id=None):
         
         if produto_id:
             produto = models.Produtos.objects.using('mongo').filter(produto_id=produto_id)
-            self.delete_imagem(produto.first())
+            self.media.delete_image(produto.first().imagem_capa)
             produto.delete()
-            redirect('stock')
+            return redirect('stock')
         
         produtos = models.Produtos.objects.using('mongo').filter(produtor_id=request.user.id)
         
@@ -124,12 +110,3 @@ class StockView(View):
         }
         
         return render(request, self.template_name, context=context)
-    
-    def delete_imagem(self, produto):
-        try:
-            if produto.imagem_capa:
-                image_path = os.path.join(settings.MEDIA_ROOT, produto.imagem_capa.path)
-                if os.path.exists(image_path):
-                    os.remove(image_path)
-        except Exception as e:
-            print(f"Erro ao deletar a imagem: {e}")

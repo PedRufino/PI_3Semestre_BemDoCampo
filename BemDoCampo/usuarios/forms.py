@@ -36,6 +36,7 @@ class ProfileForm(forms.ModelForm):
             "bairro",
             "cidade",
             "estado",
+            "imagem_perfil",
         )
         widgets = {
             'user_id': forms.HiddenInput({
@@ -104,6 +105,13 @@ class ProfileForm(forms.ModelForm):
                 'maxlength': '2',
                 'placeholder': 'SP',
                 'id': 'estado-input'
+            }),
+            'imagem_perfil': forms.FileInput(attrs={
+                'class': 'form-control',
+                'type': 'file',
+                'id': 'inputGroupFile04',
+                'aria-describedby': 'inputGroupFileAddon04',
+                'aria-label': 'Upload'
             }),
         }
 
