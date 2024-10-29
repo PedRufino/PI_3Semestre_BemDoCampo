@@ -27,3 +27,15 @@ class Usuarios(models.Model):
 
     def __str__(self):
         return self.nome
+    
+class FormaPagamento(models.Model): 
+    id_cartao = models.CharField(max_length=36, primary_key=True)
+    nome_titular = models.CharField(max_length=100, blank=False)
+    numero_cartao = models.CharField(max_length=19, blank= False)
+    validade = models.CharField(max_length=5, blank=False)
+    documento = models.CharField(max_length=20, blank=False)
+    cvc = models.IntegerField(blank=False)
+    user_id  = models.IntegerField()
+
+    class Meta:
+        managed = False

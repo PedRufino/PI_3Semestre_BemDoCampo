@@ -38,3 +38,4 @@ migrations/
 
 # Configuraçoes
 .env
+/media/*/
