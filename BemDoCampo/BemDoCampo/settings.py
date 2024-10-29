@@ -150,8 +150,6 @@ print(os.path.join(BASE_DIR, 'assets/static'))
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'assets'),
-    os.path.join(BASE_DIR, 'usuarios/static'),
-    os.path.join(BASE_DIR, 'produtos/static'),
 ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
