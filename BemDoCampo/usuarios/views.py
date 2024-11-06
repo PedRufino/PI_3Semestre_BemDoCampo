@@ -1,12 +1,15 @@
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.shortcuts import render, redirect
-from django.http import Http404
+
+from django.shortcuts import (
+    redirect,
+    render
+)
+
 from .imagens import MediaRecords
-from . import forms
 from django.views import View
-from datetime import datetime
 from . import models
+from . import forms
 import uuid
 
 @login_required(login_url='/accounts/login')
@@ -20,7 +23,8 @@ class ProfileView(View):
 
     def get(self, request):
         try:
-            user = models.Usuarios.objects.using('mongo').get(user_id=request.user.id)
+            user = models.Usuarios.objects(user_id=request.user.id).first()
+            
             user_data = self.session_user(request)
             user_data.update({
                 'documento': user.documento,
@@ -36,8 +40,8 @@ class ProfileView(View):
             })
         except:
             user_data = self.session_user(request)
-        
-        return render(request, self.template_name, context={'user_data':user_data, 'form': forms.ProfileForm(user_data)})
+
+        return render(request, self.template_name, context={'user_data': user_data, 'form': forms.ProfileForm(user_data)})
     
     def session_user(self, request):
         return {
@@ -50,82 +54,75 @@ class ProfileView(View):
     def post(self, request):
         form = forms.ProfileForm(request.POST)
         
-        user_id = form.data['user_id']
+        if form.is_valid():
+            user_id = form.cleaned_data['user_id']
+            
+            image_path = self.media.image_path(
+                request.FILES.get('imagem_perfil'),
+                user_id
+            )
 
-        date_nasc = (
-            datetime.strptime(form.data['data_nascimento'], "%d/%m/%Y").strftime("%Y-%m-%d")
-            if form.data['data_nascimento'] else None
-        )
-        
-        image_path = self.media.image_path(
-            request.FILES.get('imagem_perfil'),
-            user_id
-        )
+            usuario_atualizado = models.Usuarios.objects(user_id=user_id).first()
+            
+            if usuario_atualizado:
+                self.update_usuario(form, usuario_atualizado, image_path)
+            else:
+                novo_usuario = self.create_usuario(form, user_id, image_path)
+                novo_usuario.save(using='mongo')
 
-        usuario_atualizado = models.Usuarios.objects.using('mongo').filter(user_id=user_id).first()
-        
-        if usuario_atualizado:
-            self.update_usuario(form, usuario_atualizado, date_nasc, image_path)
-        else:
-            novo_usuario = self.create_usuario(form, user_id, date_nasc, image_path)
-            novo_usuario.save(using='mongo')
+            return redirect('dashboard')
 
-        return redirect('dashboard')
+        return render(request, self.template_name, context={'form': form})
 
-    def update_usuario(self, form, usuario, date_nasc, image_path):
+    def update_usuario(self, form, usuario, image_path):
         novos_dados = {
-            'nome': form.data.get('nome', usuario.nome),
-            'sobrenome': form.data.get('sobrenome', usuario.sobrenome),
-            'email': form.data.get('email', usuario.email),
-            'documento': form.data.get('documento', usuario.documento),
-            'contato': form.data.get('contato', usuario.contato),
-            'data_nascimento': date_nasc or usuario.data_nascimento,
-            'cep': form.data.get('cep', usuario.cep),
-            'endereco': form.data.get('endereco', usuario.endereco),
-            'numero': form.data.get('numero', usuario.numero),
-            'bairro': form.data.get('bairro', usuario.bairro),
-            'cidade': form.data.get('cidade', usuario.cidade),
-            'estado': form.data.get('estado', usuario.estado),
+            'nome': form.cleaned_data.get('nome', usuario.nome),
+            'sobrenome': form.cleaned_data.get('sobrenome', usuario.sobrenome),
+            'email': form.cleaned_data.get('email', usuario.email),
+            'documento': form.cleaned_data.get('documento', usuario.documento),
+            'contato': form.cleaned_data.get('contato', usuario.contato),
+            'data_nascimento': form.cleaned_data.get('data_nascimento', usuario.data_nascimento),
+            'cep': form.cleaned_data.get('cep', usuario.cep),
+            'endereco': form.cleaned_data.get('endereco', usuario.endereco),
+            'numero': form.cleaned_data.get('numero', usuario.numero),
+            'bairro': form.cleaned_data.get('bairro', usuario.bairro),
+            'cidade': form.cleaned_data.get('cidade', usuario.cidade),
+            'estado': form.cleaned_data.get('estado', usuario.estado),
             'imagem_perfil': image_path or usuario.imagem_perfil,
         }
 
-        models.Usuarios.objects.using('mongo').filter(user_id=usuario.user_id).update(**novos_dados)
+        models.Usuarios.objects(user_id=usuario.user_id).update(**novos_dados)
 
-    def create_usuario(self, form, user_id, date_nasc, image_path):
+    def create_usuario(self, form, user_id, image_path):
         return models.Usuarios(
             user_id=user_id,
-            nome=form.data.get('nome', ''),
-            sobrenome=form.data.get('sobrenome', ''),
-            email=form.data.get('email', ''),
-            documento=form.data.get('documento', ''),
-            contato=form.data.get('contato', ''),
-            data_nascimento=date_nasc,
-            cep=form.data.get('cep', ''),
-            endereco=form.data.get('endereco', ''),
-            numero=form.data.get('numero', ''),
-            bairro=form.data.get('bairro', ''),
-            cidade=form.data.get('cidade', ''),
-            estado=form.data.get('estado', ''),
+            nome=form.cleaned_data.get('nome', ''),
+            sobrenome=form.cleaned_data.get('sobrenome', ''),
+            email=form.cleaned_data.get('email', ''),
+            documento=form.cleaned_data.get('documento', ''),
+            contato=form.cleaned_data.get('contato', ''),
+            data_nascimento=form.cleaned_data.get('data_nascimento', ''),
+            cep=form.cleaned_data.get('cep', ''),
+            endereco=form.cleaned_data.get('endereco', ''),
+            numero=form.cleaned_data.get('numero', ''),
+            bairro=form.cleaned_data.get('bairro', ''),
+            cidade=form.cleaned_data.get('cidade', ''),
+            estado=form.cleaned_data.get('estado', ''),
             imagem_perfil=image_path or "/NoPhotoUser.png",
         )
-
-@login_required(login_url='/accounts/login')
-def payment(request):
-    return render(request, 'pages/payment.html')    
-
-class ProductsView(View):
-    template_name = 'pages/stock.html'
-    
-    def get(self, request):
-        return render(request, self.template_name)
-
 
 @method_decorator(login_required(login_url='/accounts/login'), name='dispatch')
 class PaymentViews(View):
     template_name = "pages/payment.html"
     
     def get(self, request):
-        payments = models.FormaPagamento.objects.using('mongo').all()  # Buscando todos os cartões
+        user_id = request.user.id
+        try:
+            usuario = models.Usuarios.objects.get(user_id=user_id)
+            payments = usuario.formas_pagamento
+        except models.Usuarios.DoesNotExist:
+            payments = []
+        
         context = {
             "form": forms.PaymentsForm(),
             "payments": payments
@@ -136,63 +133,70 @@ class PaymentViews(View):
         form = forms.PaymentsForm(request.POST)
         
         if form.is_valid():
-            
+            cartao_id = form.cleaned_data.get('cartao_id', None)
             user_id = request.user.id
-            novo_pagamento = form.save(commit=False)
-            novo_pagamento.id_cartao = str(uuid.uuid4())  # Gerar UUID
-            novo_pagamento.user_id = user_id
-            novo_pagamento.save(using='mongo')            
-            return redirect('payment')
+            try:
+                usuario = models.Usuarios.objects.get(user_id=user_id)
+                if cartao_id:
+                    self.update_payment(usuario, form, cartao_id)
+                else:
+                    self.create_payment(usuario, form)
+                
+                return redirect('payment')
+                
+            except models.Usuarios.DoesNotExist:
+                return redirect('some_error_page')
         
-        payments = models.FormaPagamento.objects.using('mongo').all()
+        try:
+            usuario = models.Usuarios.objects.get(user_id=user_id)
+            payments = usuario.formas_pagamento
+        except models.Usuarios.DoesNotExist:
+            payments = []
+        
         context = {
             "form": form,
             "payments": payments
         }
         return render(request, self.template_name, context=context)
-        
-    def update_pagamento(self, form, pagamento):
-        novos_dados = {
-            'id_cartao': uuid.uuid4,
-            'nome_titular': form.data.get('nome_titular', pagamento.cartoes.nome_titular),
-            'numero_cartao': form.data.get('numero_cartao', pagamento.cartoes.numero_cartao),
-            'validade': form.data.get('validade', pagamento.cartoes.validade),
-            'documento': form.data.get('documento', pagamento.cartoes.documento),
-            'cvc': form.data.get('cvc', pagamento.cartoes.cvc)
-        }
-        models.Usuarios.objects.using('mongo').filter(user_id=pagamento.user_id).update()
 
-@method_decorator(login_required(login_url='/accounts/login'), name='dispatch')
-class PaymentEditView(View):
-    template_name = "pages/payment_edit.html"  
-    
-    def get_payment_or_404(self, pk):
-        pagamento = models.FormaPagamento.objects.using('mongo').filter(id_cartao=pk).first()  
-        if not pagamento:
-            raise Http404("Cartão não encontrado")
-        return pagamento
-    
-    def get(self, request, pk):
-        pagamento = self.get_payment_or_404(pk)  
-        form = forms.PaymentsForm(instance=pagamento)
-        return render(request, self.template_name, {'form': form})
+    def update_payment(self, usuario, form, cartao_id):
+        forma_pagamento = next((fp for fp in usuario.formas_pagamento if fp.id_cartao == cartao_id), None)
+        if forma_pagamento:
+            forma_pagamento.nome_titular = form.cleaned_data.get('nome_titular', forma_pagamento.nome_titular)
+            forma_pagamento.numero_cartao = form.cleaned_data.get('numero_cartao', forma_pagamento.numero_cartao)
+            forma_pagamento.validade = form.cleaned_data.get('validade', forma_pagamento.validade)
+            forma_pagamento.documento = form.cleaned_data.get('documento', forma_pagamento.documento)
+            forma_pagamento.cvc = form.cleaned_data.get('cvc', forma_pagamento.cvc)
+            usuario.save(using='mongo')
 
-    def post(self, request, pk):
-        pagamento = self.get_payment_or_404(pk)  
-        form = forms.PaymentsForm(request.POST, instance=pagamento)  # Atualiza com os dados do cartão
+    def create_payment(self, usuario, form):
+        nova_forma_pagamento = models.FormaPagamento(
+            id_cartao=str(uuid.uuid4()),
+            nome_titular=form.cleaned_data['nome_titular'],
+            numero_cartao=form.cleaned_data['numero_cartao'],
+            validade=form.cleaned_data['validade'],
+            documento=form.cleaned_data['documento'],
+            cvc=form.cleaned_data['cvc']
+        )
         
-        if form.is_valid():
-            form.save(commit=False)
-            pagamento.save(using='mongo')
-            return redirect('payment')
-        
-        return render(request, self.template_name, {'form': form})
-
+        usuario.formas_pagamento.append(nova_forma_pagamento)
+        usuario.save(using='mongo')
 
 @method_decorator(login_required(login_url='/accounts/login'), name='dispatch')
 class PaymentDeleteView(View):
     def post(self, request, pk):
-        pagamento = models.FormaPagamento.objects.using('mongo').filter(id_cartao=pk).first()
-        if pagamento:
-            pagamento.delete()  # Exclui o cartão
-        return redirect('payment')        
+        user_id = request.user.id
+        
+        try:
+            usuario = models.Usuarios.objects.get(user_id=user_id)
+
+            forma_pagamento = next((fp for fp in usuario.formas_pagamento if fp.id_cartao == pk), None)
+
+            if forma_pagamento:
+                usuario.formas_pagamento.remove(forma_pagamento)
+                usuario.save(using='mongo')
+
+        except models.Usuarios.DoesNotExist:
+            pass
+
+        return redirect('payment')

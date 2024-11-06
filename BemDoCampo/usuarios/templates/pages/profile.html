@@ -13,7 +13,7 @@
         <div class="col-auto">
           <div class="avatar avatar-xl position-relative">
             {% if user_data.imagem_perfil %}
-              <img src="{{ user_data.imagem_perfil.url }}" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+              <img src="/media/{{ user_data.imagem_perfil }}" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
             {% else %}
               <img src="/media/NoPhotoUser.png" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
             {% endif %}

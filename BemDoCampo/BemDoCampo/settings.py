@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+
+from mongoengine import connect
 from dotenv import load_dotenv
 from pathlib import Path
 import os
@@ -97,18 +99,20 @@ WSGI_APPLICATION = 'BemDoCampo.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / "db.sqlite3",
-    },
-    'mongo': {
-        'ENGINE': 'djongo',
-        'NAME': os.getenv('DATABASE'),
-        'ENFORCE_SCHEMA': False,
-        'CLIENT': {
-            'host': f"mongodb://{os.getenv('HOST')}:{os.getenv('PORT')}",
-        }
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('NAME_DB'),
+        'USER': os.getenv('USER_ML'),
+        'PASSWORD': os.getenv('PASSWORD_ML'),
+        'HOST': os.getenv('HOST_ML'),
+        'PORT': os.getenv('PORT_ML'),
     }
 }
+
+connect(
+    db=os.getenv('NAME_DB'),
+    host=os.getenv('HOST_MO'),
+    port=int(os.getenv('PORT_MO')),
+)
 
 
 # Password validation
@@ -144,8 +148,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-print(os.path.join(BASE_DIR, 'assets/static'))
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [

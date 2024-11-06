@@ -59,6 +59,28 @@ function mask_date(id) {
     });
 }
 
+function mask_validity(id) {
+    $(document).ready(function(){
+        var documentInput = $(id);
+        
+        documentInput.on('input', function() {
+            var val = $(this).val().replace(/\D/g, '');
+            $(this).mask('00/00');
+        });
+    });
+}
+
+function mask_numberCard(id) {
+    $(document).ready(function(){
+        var documentInput = $(id);
+        
+        documentInput.on('input', function() {
+            var val = $(this).val().replace(/\D/g, '');
+            $(this).mask('0000 0000 0000 0000');
+        });
+    });
+}
+
 function mask_money(id) {
     $(document).ready(function(){
         var documentInput = $(id);
@@ -66,6 +88,11 @@ function mask_money(id) {
         documentInput.on('input', function() {
             var val = $(this).val().replace(/\D/g, '');
             $(this).mask('000.000.000.000.000,00', {reverse: true});
+        });
+
+        $('form').on('submit', function() {
+            var cleanValue = documentInput.val().replace(/\D/g, ''); // Limpa a máscara
+            documentInput.val((cleanValue.slice(0, -2) + '.' + cleanValue.slice(-2))); // Formata o valor para decimal
         });
     });
 }

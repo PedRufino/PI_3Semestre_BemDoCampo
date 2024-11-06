@@ -1,41 +1,49 @@
+from mongoengine import (
+    EmbeddedDocumentField,
+    EmbeddedDocument, 
+    DateTimeField, 
+    StringField, 
+    DateField, 
+    ListField, 
+    IntField, 
+    Document, 
+)
+
 from django.utils import timezone
 from datetime import timedelta
-from django.db import models
 
+# Define o horário atual, se necessário
 DATE_NOW = timezone.now() - timedelta(hours=3)
 
-class Usuarios(models.Model):
-    user_id = models.IntegerField(unique=True, blank=False)
-    nome = models.CharField(max_length=100, blank=False)
-    sobrenome = models.CharField(max_length=100, blank=False)
-    email = models.CharField(max_length=100, blank=False)
-    documento = models.CharField(max_length=20, blank=False)
-    contato = models.CharField(max_length=20, blank=False)
-    data_nascimento = models.DateField(blank=False)
-    cep = models.CharField(max_length=10, blank=False)
-    endereco = models.CharField(max_length=100, blank=False)
-    numero = models.IntegerField(blank=False)
-    bairro = models.CharField(max_length=100, blank=False)
-    cidade = models.CharField(max_length=100, blank=False)
-    estado = models.CharField(max_length=2, blank=False)
-    imagem_perfil = models.FileField(blank=True)
-    data_cadastro = models.DateTimeField(default=DATE_NOW)
+class FormaPagamento(EmbeddedDocument):
+    id_cartao = StringField(max_length=36, required=True)
+    nome_titular = StringField(max_length=100, required=True)
+    numero_cartao = StringField(max_length=19, required=True)
+    validade = StringField(max_length=5, required=True)
+    documento = StringField(max_length=20, required=True)
+    cvc = IntField(required=True)
 
-    class Meta:
-        db_table = 'usuarios'
-        managed = False
+class Usuarios(Document):
+    user_id = IntField(unique=True, required=True)
+    nome = StringField(max_length=100, required=True)
+    sobrenome = StringField(max_length=100, required=True)
+    email = StringField(max_length=100, required=True)
+    documento = StringField(max_length=20, required=True)
+    contato = StringField(max_length=20, required=True)
+    data_nascimento = DateField(required=True)
+    cep = StringField(max_length=10, required=True)
+    endereco = StringField(max_length=100, required=True)
+    numero = IntField(required=True)
+    bairro = StringField(max_length=100, required=True)
+    cidade = StringField(max_length=100, required=True)
+    estado = StringField(max_length=2, required=True)
+    imagem_perfil = StringField(blank=True)
+    formas_pagamento = ListField(EmbeddedDocumentField(FormaPagamento), required=False)
+    data_cadastro = DateTimeField(default=DATE_NOW)
+
+    meta = {
+        'collection': 'usuarios'
+    }
 
     def __str__(self):
         return self.nome
-    
-class FormaPagamento(models.Model): 
-    id_cartao = models.CharField(max_length=36, primary_key=True)
-    nome_titular = models.CharField(max_length=100, blank=False)
-    numero_cartao = models.CharField(max_length=19, blank= False)
-    validade = models.CharField(max_length=5, blank=False)
-    documento = models.CharField(max_length=20, blank=False)
-    cvc = models.IntegerField(blank=False)
-    user_id  = models.IntegerField()
-
-    class Meta:
-        managed = False
