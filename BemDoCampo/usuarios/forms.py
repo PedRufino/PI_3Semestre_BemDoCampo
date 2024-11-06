@@ -100,7 +100,8 @@ class PaymentsForm(forms.Form):
         widget=forms.HiddenInput(attrs={
             'id': 'id_cartao',
             'name': 'id_cartao'
-        })
+        }),
+        required=False
     )
     nome_titular = forms.CharField(
         widget=forms.TextInput(attrs={

@@ -19,6 +19,7 @@ class ProductsView(View):
     media = MediaRecords()
 
     def get(self, request, produto_id=None):
+        paths = request.path.strip('/').split('/')
         product = None
 
         if produto_id:
@@ -38,7 +39,8 @@ class ProductsView(View):
                 product = None
 
         context = {
-            'form': forms.ProductForm(product)
+            'form': forms.ProductForm(product),
+            'paths':paths
         }
 
         return render(request, self.template_name, context=context)

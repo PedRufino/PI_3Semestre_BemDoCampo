@@ -22,6 +22,8 @@ class ProfileView(View):
     media = MediaRecords()
 
     def get(self, request):
+        paths = request.path.strip('/').split('/')
+        
         try:
             user = models.Usuarios.objects(user_id=request.user.id).first()
             
@@ -41,7 +43,7 @@ class ProfileView(View):
         except:
             user_data = self.session_user(request)
 
-        return render(request, self.template_name, context={'user_data': user_data, 'form': forms.ProfileForm(user_data)})
+        return render(request, self.template_name, context={'user_data': user_data, 'paths':paths, 'form': forms.ProfileForm(user_data)})
     
     def session_user(self, request):
         return {
@@ -72,7 +74,7 @@ class ProfileView(View):
 
             return redirect('dashboard')
 
-        return render(request, self.template_name, context={'form': form})
+        return render(request, self.template_name)
 
     def update_usuario(self, form, usuario, image_path):
         novos_dados = {
@@ -147,17 +149,7 @@ class PaymentViews(View):
             except models.Usuarios.DoesNotExist:
                 return redirect('some_error_page')
         
-        try:
-            usuario = models.Usuarios.objects.get(user_id=user_id)
-            payments = usuario.formas_pagamento
-        except models.Usuarios.DoesNotExist:
-            payments = []
-        
-        context = {
-            "form": form,
-            "payments": payments
-        }
-        return render(request, self.template_name, context=context)
+        return render(request, self.template_name)
 
     def update_payment(self, usuario, form, cartao_id):
         forma_pagamento = next((fp for fp in usuario.formas_pagamento if fp.id_cartao == cartao_id), None)
