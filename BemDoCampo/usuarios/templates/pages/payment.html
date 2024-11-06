@@ -66,7 +66,7 @@
                 <h2 class="mb-0">Cartões</h2>
               </div>
               <div class="col-md-6 text-end p-0">
-                <button type="button" class="btn bg-gradient-warning m-0" data-bs-toggle="modal" data-bs-target="#modal-form">Adicionar cartão</button>
+                <button type="button" id="register_card" class="btn bg-gradient-warning m-0" data-bs-toggle="modal" data-bs-target="#modal-form">Adicionar cartão</button>
                 <!-- Modal -->
                 <div class="modal fade" id="modal-form" tabindex="-1" role="dialog" aria-labelledby="modal-form" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
@@ -79,6 +79,7 @@
                           <div class="card-body">
                             <form class="text-start" method="POST" action="{% url 'payment' %}" enctype="multipart/form-data">
                               {% csrf_token %}
+                              {{ form.cartao_id }}
                               {{ form.nome_titular.label_tag }}
                               <div class="input-group mb-3">
                                 {{ form.nome_titular }}
@@ -101,7 +102,7 @@
                               </div>
                               
                               <div class="text-center">
-                                <button type="submit" class="btn btn-round bg-gradient-info btn-lg w-100 mt-4 mb-0">Registrar</button>
+                                <button type="submit" id="submitButton" class="btn btn-round bg-gradient-info btn-lg w-100 mt-4 mb-0">Registrar</button>
                               </div>
                             </form>
                           </div>
@@ -122,11 +123,22 @@
                             <span class="text-xs">CVC: <span class="text-dark ms-sm-2 font-weight-bold">{{ payment.cvc }}</span></span>
                         </div>
                         <div class="ms-auto text-end">
-                          <a href="#" class="btn btn-info">Editar</a>
-                                <form action="{% url 'payment_delete' payment.id_cartao %}" method="post" style="display:inline;">
-                                    {% csrf_token %}
-                                    <button type="submit"class="btn btn-danger">Deletar</button>
-                                </form>
+                          <a class="btn btn-info" 
+                            id="edit_card" 
+                            data-id="{{ payment.id_cartao }}" 
+                            data-number="{{ payment.numero_cartao }}" 
+                            data-nome="{{ payment.nome_titular }}" 
+                            data-expiration="{{ payment.validade }}"
+                            data-cvc="{{ payment.cvc }}"
+                            data-document="{{ payment.documento }}"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#modal-form">
+                            Editar
+                          </a>
+                          <form action="{% url 'payment_delete' payment.id_cartao %}" method="post" style="display:inline;">
+                              {% csrf_token %}
+                              <button type="submit"class="btn btn-danger">Deletar</button>
+                          </form>
                         </div>
                     </li>
                     {% endfor %}
@@ -242,6 +254,35 @@
       mask_numberCard('#number-input');
       mask_validity('#validity-input');
       mask_document('#document-input');
+    });
+
+    document.getElementById("register_card").addEventListener("click", function() {
+        document.getElementById("id_cartao").value = "";
+        document.getElementById("number-input").value = "";
+        document.getElementById("name-input").value = "";
+        document.getElementById("validity-input").value = "";
+        document.getElementById("cvc-input").value = "";
+        document.getElementById("document-input").value = "";
+        document.getElementById("submitButton").textContent = "Registrar";
+    });
+
+    document.querySelectorAll('#edit_card').forEach(button => {
+      button.addEventListener('click', function() {
+          const cardId = this.getAttribute('data-id');
+          const cardNumber = this.getAttribute('data-number');
+          const cardHolder = this.getAttribute('data-nome');
+          const expirationDate = this.getAttribute('data-expiration');
+          const cvc = this.getAttribute('data-cvc');
+          const documentId = this.getAttribute('data-document');
+
+          document.querySelector('#id_cartao').value = cardId;
+          document.querySelector('#number-input').value = cardNumber;
+          document.querySelector('#name-input').value = cardHolder;
+          document.querySelector('#validity-input').value = expirationDate;
+          document.querySelector('#cvc-input').value = cvc;
+          document.querySelector('#document-input').value = documentId;
+          document.querySelector('#submitButton').textContent = "Editar";
+      });
     });
   </script>
 {% endblock %}

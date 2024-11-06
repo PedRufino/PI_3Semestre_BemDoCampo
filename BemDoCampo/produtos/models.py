@@ -1,50 +1,55 @@
-from django.utils import timezone
-from django.conf import settings
-from datetime import timedelta
-from django.db import models
-import os
+from mongoengine import (
+    DateTimeField, 
+    DecimalField, 
+    StringField, 
+    IntField, 
+    Document, 
+)
 
-DATE_NOW = timezone.now() - timedelta(hours=3)
+from datetime import (
+    timedelta,
+    datetime
+)
 
-class Produtos(models.Model):
-    TIPOS_PRODUTOS = [
-        ('fruta', 'Fruta'),
-        ('verdura', 'Verdura'),
-        ('grão', 'Grão'),
-        ('laticinio', 'Laticínio'),
-        ('carne', 'Carne'),
-        ('peixe', 'Peixe'),
-        ('cereal', 'Cereal'),
-        ('temperos', 'Temperos'),
-        ('oleo', 'Óleo'),
-        ('bebida', 'Bebida'),
-        ('doces', 'Doces'),
-    ]
+TIPOS_PRODUTOS = [
+    ('fruta', 'Fruta'),
+    ('verdura', 'Verdura'),
+    ('grão', 'Grão'),
+    ('laticinio', 'Laticínio'),
+    ('carne', 'Carne'),
+    ('peixe', 'Peixe'),
+    ('cereal', 'Cereal'),
+    ('temperos', 'Temperos'),
+    ('oleo', 'Óleo'),
+    ('bebida', 'Bebida'),
+    ('doces', 'Doces'),
+]
+
+TIPOS_UNIDADES = [
+    ('kg', 'Quilograma (kg)'),
+    ('g', 'Grama (g)'),
+    ('l', 'Litro (l)'),
+    ('ml', 'Mililitro (ml)'),
+    ('un', 'Unidade (un)'),
+    ('cx', 'Caixa (cx)'),
+    ('pc', 'Pacote (pc)'),
+]
+
+class Produtos(Document):
+    produto_id = StringField(required=True, max_length=255)
+    nome = StringField(required=True, max_length=100)
+    tipo_produto = StringField(choices=TIPOS_PRODUTOS, required=True)
+    quantidade = IntField(required=True)
+    tipo_unidade = StringField(choices=TIPOS_UNIDADES, required=True)
+    descricao = StringField(required=True, max_length=500)
+    produtor_id = IntField(required=True)
+    valor = DecimalField(required=True, precision=2)
+    imagem_capa = StringField(required=False)
+    data_cadastro = DateTimeField(default=datetime.now() - timedelta(hours=3))
     
-    TIPOS_UNIDADES = [
-        ('kg', 'Quilograma (kg)'),
-        ('g', 'Grama (g)'),
-        ('l', 'Litro (l)'),
-        ('ml', 'Mililitro (ml)'),
-        ('un', 'Unidade (un)'),
-        ('cx', 'Caixa (cx)'),
-        ('pc', 'Pacote (pc)'),
-    ]
-    
-    produto_id = models.CharField(max_length=255, blank=False)
-    nome = models.CharField(max_length=100, blank=False)
-    tipo_produto = models.CharField(max_length=100, choices=TIPOS_PRODUTOS, blank=False)
-    quantidade = models.IntegerField(blank=False)
-    tipo_unidade = models.CharField(max_length=5, choices=TIPOS_UNIDADES, blank=False)
-    descricao = models.TextField(blank=False)
-    produtor_id = models.IntegerField(blank=False)
-    valor = models.DecimalField(max_digits=10, decimal_places=2, blank=False)
-    imagem_capa = models.FileField(blank=True)
-    data_cadastro = models.DateTimeField(default=DATE_NOW)
-
-    class Meta:
-        db_table = 'produtos'
-        managed = False
+    meta = {
+        'collection': 'produtos'
+    }
 
     def __str__(self):
         return self.nome

@@ -1,5 +1,7 @@
 {% extends "layouts/default_dashboard.html" %}
+{% load custom_filters %}
 {% load static %}
+{% load l10n %}
 
 {% block title %}Estoque de Produtos{% endblock %}
 
@@ -75,7 +77,7 @@
                                     <tr>
                                         <td>
                                             <div class="align-middle text-center text-sm">
-                                                <img src="{{ produto.imagem_capa.url }}" alt="{{ produto.nome }}" class="avatar avatar-sm me-3">
+                                                <img src="/media/{{ produto.imagem_capa }}" alt="{{ produto.nome }}" class="avatar avatar-sm me-3">
                                             </div>
                                         </td>
                                         <td>
@@ -106,7 +108,7 @@
                                         </td>
                                         <td class="align-middle text-center">
                                             <span class="text-secondary text-xs font-weight-bold">
-                                                R$ {{ produto.valor }}
+                                                {{ produto.valor|formatar_moeda }}
                                             </span>
                                         </td>
                                         <td class="align-middle text-center">

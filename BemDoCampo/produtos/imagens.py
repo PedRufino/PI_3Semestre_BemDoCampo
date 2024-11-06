@@ -8,12 +8,12 @@ class MediaRecords:
     
     def image_path(self, image, product_id, user_id):
         if not image:
-            return "/NoPhotoProduct.jpg"
+            return "NoPhotoProduct.jpg"
         
         extension = image.name.split('.')[-1]
         file_name = f"{product_id}.{extension}"
 
-        image_path = os.path.join(settings.MEDIA_ROOT, str(user_id), "prod_img", file_name)
+        image_path = os.path.join(settings.MEDIA_ROOT, "producers", str(user_id), "prod_img", file_name)
 
         os.makedirs(os.path.dirname(image_path), exist_ok=True)
 
@@ -21,13 +21,13 @@ class MediaRecords:
             for chunk in image.chunks():
                 destination.write(chunk)
         
-        return f"{user_id}/prod_img/{file_name}"
+        return f"producers/{user_id}/prod_img/{file_name}"
     
     
     def delete_image(self, product):
         try:
             if product:
-                image_path = os.path.join(settings.MEDIA_ROOT, product.path)
+                image_path = os.path.join(settings.MEDIA_ROOT, product)
                 if os.path.exists(image_path):
                     os.remove(image_path)
         except Exception as e:
