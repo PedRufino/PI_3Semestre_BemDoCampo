@@ -38,4 +38,4 @@ migrations/
 
 # Configuraçoes
 .env
-/media/*/
+producers/
