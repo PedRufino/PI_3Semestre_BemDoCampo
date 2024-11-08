@@ -16,7 +16,7 @@ import uuid
 def dashboard(request):
     return render(request, 'dashboard.html')
 
-@method_decorator(login_required(login_url='/accounts/login'), name='dispatch')
+@method_decorator(login_required(), name='dispatch')
 class ProfileView(View):
     template_name = 'pages/profile.html'
     media = MediaRecords()
@@ -113,7 +113,7 @@ class ProfileView(View):
             imagem_perfil=image_path or "/NoPhotoUser.png",
         )
 
-@method_decorator(login_required(login_url='/accounts/login'), name='dispatch')
+@method_decorator(login_required(), name='dispatch')
 class PaymentViews(View):
     template_name = "pages/payment.html"
     
@@ -174,7 +174,7 @@ class PaymentViews(View):
         usuario.formas_pagamento.append(nova_forma_pagamento)
         usuario.save(using='mongo')
 
-@method_decorator(login_required(login_url='/accounts/login'), name='dispatch')
+@method_decorator(login_required(), name='dispatch')
 class PaymentDeleteView(View):
     def post(self, request, pk):
         user_id = request.user.id
