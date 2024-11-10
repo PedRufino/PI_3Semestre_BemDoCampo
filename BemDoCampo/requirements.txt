@@ -10,7 +10,7 @@ dnspython==2.7.0
 fontawesomefree==6.6.0
 idna==3.10
 mongoengine==0.29.1
-mysqlclient==2.2.5
+mysqlclient==2.2.4
 pycparser==2.22
 PyJWT==2.9.0
 pymongo==4.10.1

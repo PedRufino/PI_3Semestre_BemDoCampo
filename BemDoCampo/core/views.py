@@ -24,3 +24,15 @@ class IndexView(View):
             }
         }
         return render(request, self.template_name, context=context)
+
+
+class SobreView(View):
+    template_name = 'pages/sobre.html'
+    
+    def get(self, request):
+        paths = request.path.strip('/').split('/')
+        paths.append('Bem do Campo')
+        context = {
+            'paths': paths
+        }
+        return render(request, self.template_name, context=context)

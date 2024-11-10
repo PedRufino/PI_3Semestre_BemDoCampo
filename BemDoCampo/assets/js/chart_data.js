@@ -84,7 +84,7 @@ options: {
         color: '#b2b9bf',
         font: {
             size: 11,
-            family: "Open Sans",
+            family: "Montserrat",
             style: 'normal',
             lineHeight: 2
         },
@@ -104,7 +104,7 @@ options: {
         padding: 20,
         font: {
             size: 11,
-            family: "Open Sans",
+            family: "Montserrat",
             style: 'normal',
             lineHeight: 2
         },
