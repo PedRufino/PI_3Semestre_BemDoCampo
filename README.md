@@ -24,7 +24,7 @@ Nossa iniciativa alinha-se aos Objetivos 2° e 12° da Agenda 2030 para o Desenv
 ## Integrantes do grupo:
 
 
-  - [Pedro Nicolau](https://github.com/#)
   - [Pedro Rufino da Mata Neto](https://github.com/PedNeto)
   - [Stephan Mendes de Oliveira](https://github.com/StephanMendes)
   - [Victor Manoel Martins](https://github.com/heyvitin)
+  - [Pedro Nicolau](https://github.com/pedromnicolau)
