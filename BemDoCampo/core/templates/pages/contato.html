@@ -1,0 +1,134 @@
+{% extends "layouts/default_index.html" %}
+{% load static %}
+
+{% block 'head' %}
+
+{% endblock %}
+
+{% block title %}Bem do Campo | Sobre Nós{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12 col-xl-12">
+            <div class="card h-100">
+                <div class="card-body p-3">
+                    <div class="container px-4 py-5">
+                        <h2 class="fw-bold text-body-emphasis">Principais Assuntos</h2>
+                        <div class="row g-5 py-5">
+                            <div class="col-lg-4">
+                                <div class="card shadow-sm">
+                                    <img src="{% static 'imgs/trocas_devolucao.jpg' %}" width="100%" height="225"
+                                        alt="trocas e devolucao">
+                                    <div class="card-body">
+                                        <h4 class="mb-0 text-center pb-3">Trocas e Devolução</h4>
+                                        <p class="card-text text-justify">
+                                            No BemDoCampo, garantimos a sua satisfação. Se houver qualquer problema com
+                                            o produto, você pode solicitar trocas ou devoluções de maneira simples e
+                                            rápida, pois nossa prioridade é a sua melhor experiência.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="card shadow-sm">
+                                    <img src="{% static 'imgs/estorno.jpg' %}" width="100%" height="225"
+                                        alt="trocas e devolucao">
+                                    <div class="card-body">
+                                        <h4 class="mb-0 text-center pb-3">Estorno</h4>
+                                        <p class="card-text text-justify">
+                                            Oferecemos um processo de estorno ágil e transparente. Caso seu pedido seja
+                                            cancelado ou o produto devolvido, o valor é reembolsado conforme nossa
+                                            política, diretamente na forma de pagamento escolhida.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="card shadow-sm">
+                                    <img src="{% static 'imgs/produtor.jpg' %}" width="100%" height="225"
+                                        alt="trocas e devolucao">
+                                    <div class="card-body">
+                                        <h4 class="mb-0 text-center pb-3">Informações dos Produtores</h4>
+                                        <p class="card-text text-justify">
+                                            Nossos produtores são cuidadosamente selecionados para garantir alimentos de
+                                            qualidade. Você pode acessar informações sobre a origem, práticas
+                                            sustentáveis e métodos de produção de cada agricultor registrado.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container px-4 py-5" id="hanging-icons">
+                    <h2 class="fw-bold text-body-emphasis">Canais de Atendimento</h2>
+                    <div class="row g-4 py-5 row-cols-1 row-cols-lg-4">
+                        <div class="col-lg-3 d-flex align-items-start">
+                            <div class="row">
+                                <div class="col-1 text-body-emphasis d-inline-flex align-items-center fs-4">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </div>
+                                <h4 class="col-10 text-body-emphasis m-0">E-mail</h4>
+                                <p>
+                                    Você preenche um formulário e a gente te responde por e-mail.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 d-flex align-items-start">
+                            <div class="row">
+                                <div class="col-1 text-body-emphasis d-inline-flex align-items-center fs-4">
+                                    <i class="fa-solid fa-phone"></i>
+                                </div>
+                                <h4 class="col-10 text-body-emphasis m-0">SAC</h4>
+                                <p>
+                                    Informações automatizadas sobre os nossos serviços.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 d-flex align-items-start">
+                            <div class="row">
+                                <div class="col-1 text-body-emphasis d-inline-flex align-items-center fs-4">
+                                    <i class="fa-regular fa-comment-dots"></i>
+                                </div>
+                                <h4 class="col-10 text-body-emphasis m-0">Bate-papo</h4>
+                                <p>
+                                    Informações automatizadas sobre os nossos serviços.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 d-flex align-items-start">
+                            <div class="row">
+                                <div class="col-1 text-body-emphasis d-inline-flex align-items-center fs-4">
+                                    <i class="fa-brands fa-whatsapp"></i>
+                                </div>
+                                <h4 class="col-10 text-body-emphasis m-0">Whatsapp</h4>
+                                <p>
+                                    Fale direto no seu Whatsapp com nossos atendentes.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container px-4 py-5 text-center">
+                    <div class="row justify-content-center">
+                        <div class="col-1 justify-content-center d-inline-flex align-items-center fs-4">
+                            <i class="fa-brands fa-youtube"></i>
+                        </div>
+                        <div class="col-1 justify-content-center d-inline-flex align-items-center fs-4">
+                            <i class="fa-brands fa-linkedin"></i>
+                        </div>
+                        <div class="col-1 justify-content-center d-inline-flex align-items-center fs-4">
+                            <i class="fa-brands fa-facebook"></i>
+                        </div>
+                        <div class="col-1 justify-content-center d-inline-flex align-items-center fs-4">
+                            <i class="fa-brands fa-instagram"></i>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

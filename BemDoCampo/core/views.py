@@ -36,3 +36,14 @@ class SobreView(View):
             'paths': paths
         }
         return render(request, self.template_name, context=context)
+
+class ContatoView(View):
+    template_name = 'pages/contato.html'
+    
+    def get(self, request):
+        paths = request.path.strip('/').split('/')
+        paths.append('Bem do Campo')
+        context = {
+            'paths': paths
+        }
+        return render(request, self.template_name, context=context)
