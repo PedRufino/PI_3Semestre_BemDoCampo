@@ -18,9 +18,30 @@
 
 {% endblock %}
 
-{% block title %}Tenda | {{ produtor.nome }}{% endblock %}
+{% block title %}Tenda | {{ produtor.nome | title }}{% endblock %}
 
 {% block body %}
+<div class="container-fluid">
+    <div class="page-header min-height-100 border-radius-xl mt-4">
+        <span class="mask bg-gradient-primary opacity-6"></span>
+    </div>
+    <div class="card card-body blur shadow-blur mx-4 mt-n6 overflow-hidden">
+        <div class="row gx-4">
+            <div class="col-auto">
+                <div class="avatar avatar-xl position-relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="50" height="50" x="0" y="0" viewBox="0 0 26 26" style="enable-background:new 0 0 512 512" xml:space="preserve" class=""><g><path d="M18.139 20.061 13 16.195l-5.033 3.863-2.925-1.715v1.871L13 25.475l7.977-5.225v-1.876zM26 5.38 18.326.525 13 4.905l7.965 4.63z" style="" fill="#334666" data-original="#030104" opacity="1" class=""></path><path d="m0 13.81 7.896 4.63L13 14.522l-7.562-4.81zM7.896.525 0 5.618l5.438 4.094L13 4.905zM13 14.522l5.207 3.918L26 13.81l-5.035-4.275z" style="" fill="#334666" data-original="#030104" opacity="1" class=""></path></g></svg>
+                </div>
+            </div>
+            <div class="col-auto my-auto p-0">
+                <div class="h-100">
+                    <h3 class="mb-1">
+                        Cadastro de Produtos
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="container-fluid py-4">
     <div class="row">
         <div class="col-12 col-xl-12">
