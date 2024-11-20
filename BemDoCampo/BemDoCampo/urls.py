@@ -26,4 +26,5 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('usuario/', include('usuarios.urls'), name='users'),
     path('produtos/', include('produtos.urls'), name='products'),
+    path('tenda/', include('tenda.urls'), name='tent'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
