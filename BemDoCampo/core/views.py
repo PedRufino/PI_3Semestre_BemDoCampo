@@ -1,39 +1,59 @@
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.shortcuts import render, redirect
+from django.core.paginator import Paginator
+from django.http import JsonResponse
 from django.views import View
+import mongoengine
+import locale
+
+locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+
 
 class IndexView(View):
     template_name = 'index.html'
-    color_product = '#000000'
+    db = mongoengine.connection.get_db()
     
     def get(self, request):
         context = {
-            'tipos_produtos': {
-                'fruta': {'nome':'Fruta', 'class': "fa-apple-whole", "color": f'{self.color_product}'},
-                'verdura': {'nome':'Verdura', 'class': "fa-solid fa-carrot", "color": f'{self.color_product}'},
-                'grao': {'nome':'Grão', 'class': "fa-wheat-awn", "color": f'{self.color_product}'},
-                'laticinio': {'nome':'Laticínio', 'class': "fa-cow", "color": f'{self.color_product}'},
-                'carne': {'nome':'Carne', 'class': "fa-drumstick-bite", "color": f'{self.color_product}'},
-                'peixe': {'nome':'Peixe', 'class': "fa-fish", "color": f'{self.color_product}'},
-                'cereal': {'nome':'Cereal', 'class': "fa-wheat-awn", "color": f'{self.color_product}'},
-                'temperos': {'nome':'Temperos', 'class': "fa-leaf", "color": f'{self.color_product}'},
-                'oleo': {'nome':'Óleo', 'class': "fa-bottle-droplet", "color": f'{self.color_product}'},
-                'bebida': {'nome':'Bebida', 'class': "fa-wine-bottle", "color": f'{self.color_product}'},
-                'doces': {'nome':'Doces', 'class': "fa-candy-cane", "color": f'{self.color_product}'},
-            }
+            'produtos': self.favoritos_momento(),
+            'paths': ['Bem do Campo', 'Mercado']
         }
         return render(request, self.template_name, context=context)
+    
+    def favoritos_momento(self):
+        produtos_cursor = self.db.produtos.find().limit(10).sort([('total_vendas', -1)])
+        produtos_favoritos = []
+
+        for produto in produtos_cursor:
+            user_id = produto['produtor_id']
+            usuario = self.db.usuarios.find_one({'user_id': user_id})
+            dados = {}
+
+            if usuario:
+                dados = {
+                    'tempo_entrega': f"{usuario.get('tempo_entrega').get('min')}-{usuario.get('tempo_entrega').get('max')}",
+                    'media_avaliacoes': usuario.get('media_avaliacoes'),
+                    'tx_entrega': usuario.get('tx_entrega'),
+                }
+
+            produtos_favoritos.append({
+                'nome': produto.get('nome'),
+                'valor': produto.get('valor'),
+                'imagem_capa': produto.get('imagem_capa'),
+                'user': dados,
+            })
+        
+        print(produtos_favoritos)
+
+        return produtos_favoritos
+
 
 
 class SobreView(View):
     template_name = 'pages/sobre.html'
     
     def get(self, request):
-        paths = request.path.strip('/').split('/')
-        paths.append('Bem do Campo')
         context = {
-            'paths': paths
+            'paths': ['Bem do Campo','Sobre Nós']
         }
         return render(request, self.template_name, context=context)
 
@@ -41,9 +61,90 @@ class ContatoView(View):
     template_name = 'pages/contato.html'
     
     def get(self, request):
-        paths = request.path.strip('/').split('/')
-        paths.append('Bem do Campo')
         context = {
-            'paths': paths
+            'paths': ['Bem do Campo','Contato']
         }
         return render(request, self.template_name, context=context)
+
+class TendasListView(View):
+    db = mongoengine.connection.get_db()
+    
+    def get(self, request, page_number=1):
+        tendas = list(self.db.usuarios.find())
+        
+        if request.GET.get('filtro', False):
+            tendas = self.aplicar_filtros(request)
+        
+        if not tendas:
+            return JsonResponse({
+                'erro': True,
+                'msg': 'Nenhum resultado encontrado'
+            })
+        
+        paginator = Paginator(self.parse_tenda(tendas), 12)
+
+        if page_number > paginator.num_pages:
+            items_data = []
+        else:
+            items_data = [item for item in paginator.get_page(page_number)]
+
+        return JsonResponse({"erro": False, "items": items_data, "pages": paginator.num_pages})
+    
+    def aplicar_filtros(self, request):
+        filtros = {}
+        orders = []
+
+        if request.GET.get('descAvaliacao', False):
+            descAvaliacao = request.GET['descAvaliacao']
+            if 'true' in descAvaliacao:
+                orders.append(('media_avaliacoes', -1))
+        
+        if request.GET.get('tempoEntrega', False):
+            tempoEntrega = request.GET['tempoEntrega']
+            if 'true' in tempoEntrega:
+                orders.append(('tempo_entrega', 1))
+        
+        if request.GET.get('taxaEntrega', False):
+            taxaEntrega = request.GET['taxaEntrega']
+            if 'true' in taxaEntrega:
+                orders.append(('tx_entrega', 1))
+        
+        if request.GET.get('filterBy', ''):
+            filter_by = request.GET['filterBy']
+            filtros['tipo_usuario'] = filter_by
+        
+        if request.GET.get('search', ''):
+            search = request.GET['search']
+            filtros['nome_tenda'] = {"$regex": f"^{search}", "$options": "i"}
+        
+        if request.GET.get('entregaGratis', False):
+            entregaGratis = request.GET['entregaGratis']
+            if 'true' in entregaGratis:
+                filtros['tx_entrega'] = 0
+
+        query = self.db.usuarios.find(filtros)
+
+        if orders:
+            query = query.sort(orders)
+        
+        return list(query)
+
+    def parse_tenda(self, tendas):
+        item = []
+        for tenda in tendas:
+            if tenda:
+                if not tenda['tx_entrega']:
+                    valor = "Grátis"
+                else:
+                    valor = locale.currency(tenda['tx_entrega'], grouping=True)
+                    
+                item.append({
+                    "user_id": tenda['user_id'],
+                    "nome_tenda": tenda['nome_tenda'].title(),
+                    "tx_entrega": valor,
+                    "tmp_entrega": tenda['tempo_entrega'],
+                    "tipo_usuario": tenda['tipo_usuario'].title(),
+                    "media_avaliacoes": tenda['media_avaliacoes'],
+                    "imagem_perfil": tenda['imagem_perfil'],
+                })
+        return item

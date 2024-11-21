@@ -26,6 +26,22 @@ class ProfileForm(forms.Form):
         'placeholder': 'Snow',
         'id': 'lastname-input'
     }))
+    nome_tenda = forms.CharField(max_length=100, label="Nome da Tenda", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Fazenda São Pedro ou Bia Hortifruti ',
+        'id': 'tenda-input'
+    }))
+    tx_entrega = forms.DecimalField(
+        label="Taxa de Entrega",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': '4.99',
+            'step':'0.01',
+            'id': 'money-input'
+        }),
+        max_digits=10,
+        decimal_places=2
+    )
     email = forms.EmailField(max_length=100, label="Email", widget=forms.EmailInput(attrs={
         'class': 'form-control',
         'placeholder': '@example.com',

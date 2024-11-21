@@ -45,6 +45,7 @@ class Produtos(Document):
     produtor_id = IntField(required=True)
     valor = DecimalField(required=True, precision=2)
     imagem_capa = StringField(required=False)
+    total_vendas = IntField(required=False)
     data_cadastro = DateTimeField(default=datetime.now() - timedelta(hours=3))
     
     meta = {

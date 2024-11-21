@@ -1,12 +1,564 @@
 {% extends "layouts/default_index.html" %}
+{% load custom_filters %}
 {% load static %}
 
-{% block 'head' %}
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flickity/2.2.2/flickity.min.css">
+<style>
+    .custom-column {
+        max-width: 300px;
+    }
+
+    @media (max-width: 1366px) {
+        .custom-column {
+            max-width: 160px;
+        }
+    }
+
+    @media (max-width: 468px) {
+        .custom-column {
+            max-width: 150px;
+        }
+    }
+
+    .btn-active {
+        background-color: #ffe380 !important;
+        color: #ff390d !important;
+        border-color: #ff0d0d00 !important;
+    }
+
+    #search-bar {
+        border-radius: 0px 0px 0px 0px !important;
+    }
+
+    .btn-card {
+        transition: all 0.15s ease-in;
+    }
+    .btn-card:hover {
+        box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.09), 0 2px 3px -1px rgba(0, 0, 0, 0.07);
+        transform: scale(1.02);
+        color: black
+    }
+
+    .tx-verde {
+        color: #40b53c;
+        font-size: 0.70rem;
+        font-weight: 700;
+    }
+    
+    .tx-padrao {
+        font-size: 0.70rem;
+        font-weight: 700;
+    }
+
+</style>
+{% endblock %}
+
+{% block title %}Bem do Campo | Produtores{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12 col-xl-12">
+            <div class="card h-100">
+                <div class="row">
+                    <div class="col-md-12 mx-auto">
+                        <div class="carousel"
+                            data-flickity='{ "wrapAround": true, "imagesLoaded": true, "percentPosition": false, "autoPlay": 6000, "pageDots": false }'>
+                            {% for x in "123"|make_list %}
+                            <img id="carousel-img" value="{{x}}" style="height: 300px;" class="d-block w-100 shadow-lg"
+                                alt="...">
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-3">
+                    <div class="row justify-content-center pb-5">
+                        <div class="col-lg-12 mt-4 mb-3">
+                            <h4 class="fw-bold text-body-emphasis lh-1">
+                                Favoritos do Momento
+                            </h4>
+                        </div>
+                        <div class="col-12">
+                            <div class="carousel"
+                                data-flickity='{ "wrapAround": true, "autoPlay": 8000, "pageDots": false }'>
+                                {% for prod in produtos %}
+                                <a href="#" class="btn-card btn-a carousel-cell shadow-sm mx-2 my-2 bg-body-tertiary rounded text-center"
+                                    style="width: 180px;">
+                                    <img class="w-100 card-img-top rounded-top-2" src="/media/NoPhotoProduct.jpg"
+                                        alt="{{ prod.nome }}">
+                                    <div class="card-body p-2">
+                                        <h6 class="text-center mb-1">{{ prod.nome }}</h6>
+                                        <p class="card-text text-center mb-1">{{ prod.valor|formatar_moeda }}</p>
+                                        <hr class="horizontal dark my-2">
+                                        <div class="text-center">
+                                            <i class="fa-solid fa-star" style="color: #fcbb00; font-size: .70rem"></i>
+                                            <span
+                                                style="text-decoration: none; color: #fcbb00; font-size: .70rem; font-weight: 700;">
+                                                {{prod.user.media_avaliacoes}}
+                                            </span>
+                                            <span class="">•</span>
+                                            <span style="font-size: .70rem; font-weight: 700;">
+                                                {{prod.user.tempo_entrega}} min
+                                            </span>
+                                            <span class="">•</span>
+                                            <span class="text-center m-0 {% if prod.user.tx_entrega == 0 %}tx-verde{% else %}tx-padrao{% endif %}">
+                                                {% if prod.user.tx_entrega == 0 %}
+                                                    Grátis
+                                                {% else %}
+                                                    R$ {{ prod.user.tx_entrega }}
+                                                {% endif %}
+                                            </span>
+                                            
+                                        </div>
+                                    </div>
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row align-content-center">
+                        <div id="button-center" class="col">
+                            <button type="submit" class="btn btn-icon btn-3 btn btn-outline-dark rounded-5"
+                                id="btnOrder" data-bs-toggle="modal" data-bs-target="#order">
+                                <span class="btn-inner--text">Ordenar</span>
+                                <span class="btn-inner--icon"><i class="fa-solid fa-chevron-down"></i></span>
+                            </button>
+                            <button id="entregaGratis" type="button"
+                                class="btn btn-icon btn-3 btn-outline-dark rounded-5"
+                                onclick="toggleOrder('entregaGratis')">
+                                <span class="btn-inner--text">Entrega Grátis</span>
+                            </button>
+                            <button type="submit" class="btn btn-icon btn-3 btn btn-outline-dark rounded-5"
+                                id="btnFilter" data-bs-toggle="modal" data-bs-target="#filter">
+                                <span class="btn-inner--text">Filtros</span>
+                                <span class="btn-inner--icon"><i class="fa-solid fa-filter"></i></span>
+                            </button>
+                            <button type="submit" class="btn btn-icon btn-3 btn-outline-dark rounded-5"
+                                onclick="limparFiltro()">
+                                <span class="btn-inner--text">Limpar</span>
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group m-0">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                    <input class="form-control" id="search-bar" placeholder="Search" type="text">
+                                    <button class="btn btn-outline-danger mb-0" type="button"
+                                        id="search-btn">Pesquisar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="order" tabindex="-1" aria-labelledby="orderModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header justify-content-center">
+                                    <h5 class="modal-title" id="exampleModalLabel">Ordenar por</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-6 text-center d-flex justify-content-center pb-5">
+                                            <button class="btn btn-icon btn-2 btn-outline-secondary rounded-circle"
+                                                type="submit" onclick="limparFiltro()"
+                                                style="width: 72px; height: 72px; padding: 0; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                                <span class="btn-inner--icon">
+                                                    <i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"
+                                                        style="font-size: 24px;"></i>
+                                                </span>
+                                                <span
+                                                    style="position: absolute;bottom: -40px;font-size: 12px; text-align: center;display: block;">
+                                                    Ordenação Padrão
+                                                </span>
+                                            </button>
+                                        </div>
+                                        <div class="col-6 text-center d-flex justify-content-center pb-5">
+                                            <button class="btn btn-icon btn-2 btn-outline-secondary rounded-circle"
+                                                id="descAvaliacao" type="submit" onclick="toggleOrder('descAvaliacao')"
+                                                style="width: 72px; height: 72px; padding: 0; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                                <span class="btn-inner--icon">
+                                                    <i class="fa-solid fa-star" aria-hidden="true"
+                                                        style="font-size: 24px;"></i>
+                                                </span>
+                                                <span
+                                                    style="position: absolute;bottom: -23px;font-size: 12px; text-align: center;display: block;">
+                                                    Avaliação
+                                                </span>
+                                            </button>
+                                        </div>
+                                        <div class="col-6 text-center d-flex justify-content-center pb-5">
+                                            <button class="btn btn-icon btn-2 btn-outline-secondary rounded-circle"
+                                                id="tempoEntrega" type="submit" onclick="toggleOrder('tempoEntrega')"
+                                                style="width: 72px; height: 72px; padding: 0; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                                <span class="btn-inner--icon">
+                                                    <i class="fa-solid fa-clock" aria-hidden="true"
+                                                        style="font-size: 24px;"></i>
+                                                </span>
+                                                <span
+                                                    style="position: absolute;bottom: -40px; font-size: 12px; text-align: center;display: block;">
+                                                    Tempo de Entrega
+                                                </span>
+                                            </button>
+                                        </div>
+                                        <div class="col-6 text-center d-flex justify-content-center pb-5">
+                                            <button class="btn btn-icon btn-2 btn-outline-secondary rounded-circle"
+                                                id="taxaEntrega" type="submit" onclick="toggleOrder('taxaEntrega')"
+                                                style="width: 72px; height: 72px; padding: 0; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                                <span class="btn-inner--icon">
+                                                    <i class="fa-solid fa-motorcycle" aria-hidden="true"
+                                                        style="font-size: 24px;"></i>
+                                                </span>
+                                                <span
+                                                    style="position: absolute;bottom: -40px;font-size: 12px; text-align: center;display: block;">
+                                                    Taxa de Entrega
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="filter" tabindex="-1" aria-labelledby="filterModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header justify-content-center">
+                                    <h5 class="modal-title" id="exampleModalLabel">Filtrar por</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-6 text-center d-flex justify-content-center pb-5">
+                                            <button class="btn btn-icon btn-2 btn-outline-secondary rounded-circle"
+                                                id="agricultor" type="submit" onclick="toggleFiltro('agricultor')"
+                                                style="width: 72px; height: 72px; padding: 0; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                                <span class="btn-inner--icon">
+                                                    <i class="fa-solid fa-tractor" aria-hidden="true"
+                                                        style="font-size: 24px;"></i>
+                                                </span>
+                                                <span
+                                                    style="position: absolute;bottom: -40px;font-size: 12px; text-align: center;display: block;">
+                                                    Agricultor
+                                                </span>
+                                            </button>
+                                        </div>
+                                        <div class="col-6 text-center d-flex justify-content-center pb-5">
+                                            <button class="btn btn-icon btn-2 btn-outline-secondary rounded-circle"
+                                                id="pecuarista" type="submit" onclick="toggleFiltro('pecuarista')"
+                                                style="width: 72px; height: 72px; padding: 0; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                                <span class="btn-inner--icon">
+                                                    <i class="fa-solid fa-cow" aria-hidden="true"
+                                                        style="font-size: 24px;"></i>
+                                                </span>
+                                                <span
+                                                    style="position: absolute;bottom: -23px;font-size: 12px; text-align: center;display: block;">
+                                                    Pecuarista
+                                                </span>
+                                            </button>
+                                        </div>
+                                        <div class="col-6 text-center d-flex justify-content-center pb-5">
+                                            <button class="btn btn-icon btn-2 btn-outline-secondary rounded-circle"
+                                                id="cultivador" type="submit" onclick="toggleFiltro('cultivador')"
+                                                style="width: 72px; height: 72px; padding: 0; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                                <span class="btn-inner--icon">
+                                                    <i class="fa-solid fa-seedling" aria-hidden="true"
+                                                        style="font-size: 24px;"></i>
+                                                </span>
+                                                <span
+                                                    style="position: absolute;bottom: -40px;font-size: 12px; text-align: center;display: block;">
+                                                    Cultivador
+                                                </span>
+                                            </button>
+                                        </div>
+                                        <div class="col-6 text-center d-flex justify-content-center pb-5">
+                                            <button class="btn btn-icon btn-2 btn-outline-secondary rounded-circle"
+                                                id="comerciante" type="submit" onclick="toggleFiltro('comerciante')"
+                                                style="width: 72px; height: 72px; padding: 0; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                                <span class="btn-inner--icon">
+                                                    <i class="fa-solid fa-shop" aria-hidden="true"
+                                                        style="font-size: 24px;"></i>
+                                                </span>
+                                                <span
+                                                    style="position: absolute;bottom: -40px;font-size: 12px; text-align: center;display: block;">
+                                                    Comerciante
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 mt-4 mb-3">
+                        <h4 class="fw-bold text-body-emphasis lh-1">
+                            Tendas
+                        </h4>
+                    </div>
+                </div>
+                
+                <div class="row row-cols-1 row-cols-xl-3 g-2 g-lg-3"
+                    id="items-container">
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-11">
+                        <button id="load-more" class="btn btn-outline-danger w-100" style="display: none;">Ver
+                            Mais</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
 
-{% block title %}Bem do Campo | Home{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/infinite-scroll@4.0.1/dist/infinite-scroll.pkgd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flickity/2.2.2/flickity.pkgd.min.js"></script>
 
-{% block body %}
+<script>
+    window.addEventListener('resize', updateImageSrc);
+    window.addEventListener('load', updateImageSrc);
 
+    function updateImageSrc() {
+        const screenWidth = window.innerWidth;
+        const images = document.querySelectorAll('#carousel-img');
+
+        images.forEach(img => {
+            const x = img.getAttribute('value');
+            if (screenWidth <= 768) {
+                img.src = "{% static 'imgs/carousel/carousel' %}-" + x + "-" + x + ".jpg";
+                document.querySelector('#button-center').classList = 'col text-center'
+            } else {
+                img.src = "{% static 'imgs/carousel/carousel' %}-" + x + ".jpg";
+                document.querySelector('#button-center').classList = 'col'
+            }
+        });
+    }
+</script>
+
+<script>
+    var pageNumber = 1;
+    let ordersAtivos = {
+        entregaGratis: false,
+        descAvaliacao: false,
+        tempoEntrega: false,
+        taxaEntrega: false,
+    };
+
+    let active_filter_by = {
+        agricultor: false,
+        pecuarista: false,
+        cultivador: false,
+        comerciante: false,
+    };
+
+    let filterBy = '';
+    let searchQuery = '';
+
+    function btnFilterActive() {
+        orders = Object.values(ordersAtivos).filter(valor => valor).length;
+        filters = Object.values(active_filter_by).filter(valor => valor).length;
+
+        if (orders !== 0) {
+            if (!ordersAtivos['entregaGratis']) {
+                document.getElementById('btnOrder').classList.add("btn-active");
+            }
+        } else {
+            document.getElementById('btnOrder').classList.remove("btn-active");
+        }
+
+        if (filters !== 0) {
+            document.getElementById('btnFilter').classList.add("btn-active");
+        } else {
+            document.getElementById('btnFilter').classList.remove("btn-active");
+        }
+
+    }
+
+
+    function limparFiltro() {
+        Object.keys(active_filter_by).forEach(item => {
+            active_filter_by[item] = false;
+            document.getElementById(item).classList.remove("btn-active");
+        });
+
+        Object.keys(ordersAtivos).forEach(item => {
+            ordersAtivos[item] = false;
+            document.getElementById(item).classList.remove("btn-active");
+        });
+
+        document.querySelector('#search-bar').value = ""
+        searchQuery = ''
+
+        btnFilterActive()
+        carregarItens(true);
+    }
+
+    function toggleOrder(filtro) {
+        ordersAtivos[filtro] = !ordersAtivos[filtro];
+        document.getElementById(filtro).classList.toggle("btn-active");
+
+        btnFilterActive()
+        carregarItens(true);
+    }
+
+    function toggleFiltro(filtro) {
+        const isAlreadyActive = active_filter_by[filtro];
+
+        Object.keys(active_filter_by).forEach(item => {
+            active_filter_by[item] = false;
+            document.getElementById(item).classList.remove("btn-active");
+        });
+
+        if (!isAlreadyActive) {
+            active_filter_by[filtro] = true;
+            document.getElementById(filtro).classList.add("btn-active");
+            filterBy = filtro;
+        } else {
+            filterBy = '';
+        }
+
+        btnFilterActive()
+        carregarItens(true);
+    }
+
+    // Função para realizar a pesquisa
+    function performSearch() {
+        searchQuery = document.getElementById('search-bar').value;
+        carregarItens(true);
+    }
+
+    function carregarItens(reset = false) {
+        if (reset) {
+            pageNumber = 1;
+            document.querySelector('#items-container').innerHTML = '';
+        }
+
+        let url = `/items/page/${pageNumber}`;
+
+        count = 0
+
+        Object.keys(ordersAtivos).forEach(order => {
+            if (ordersAtivos[order]) {
+                if (count === 0) {
+                    url += '?filtro=true';
+                    count++;
+                }
+
+                url += `&${order}=true`;
+            }
+        });
+
+        Object.keys(active_filter_by).forEach(filtro => {
+            if (active_filter_by[filtro]) {
+                if (count === 0) {
+                    url += '?filtro=true';
+                    count++;
+                }
+
+                url += `&filterBy=${filterBy}`;
+            }
+        });
+
+        if (searchQuery) {
+            if (count === 0) {
+                url += '?filtro=true';
+                count++;
+            }
+
+            url += `&search=${encodeURIComponent(searchQuery)}`;
+        }
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const itemsContainer = document.querySelector('#items-container');
+                if (data.erro) {
+                    document.getElementById('items-container').classList.add("justify-content-center");
+                    let itemDiv = document.createElement('div');
+                    itemDiv.classList.add('col', 'text-center');
+                    itemDiv.innerHTML = `
+                            <h5 class="font-weight-bolder mb-0" style="color: #CC3300;">
+                                ${data.msg}
+                            </h5>
+                        `;
+                    itemsContainer.appendChild(itemDiv);
+                } else {
+                    data.items.forEach(item => {
+                        document.getElementById('items-container').classList.remove("justify-content-center");
+                        let style = item.tx_entrega === "Grátis" ? "color: #40b53c; font-weight: 700;" : "";
+                        let img_tenda = item.imagem_perfil === "" ? "https://m.media-amazon.com/images/I/91Z5eKWm9aL._AC_UF894,1000_QL80_.jpg" : "/media/" + item.imagem_perfil;
+                        let itemDiv = document.createElement('div');
+                        itemDiv.classList.add('col', 'd-flex', 'align-items-center');
+                        itemDiv.innerHTML = `
+                            <div class="col p-3 rounded-4">
+                                <a href="/tenda/${item.user_id}" class="btn-card card btn-a">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0" style="width: 110px; height: 96px;">
+                                            <div class="ratio ratio-16x9" style="width: 100%; height: 100%;">
+                                                <img style="width: 100%; height: 100%;"
+                                                    src="${img_tenda}"
+                                                    class="rounded-start" alt="${item.nome_tenda}" style="object-fit: cover;">
+                                            </div>
+                                        </div>
+                                        <div class="card-body d-flex flex-column py-1" style="flex-grow: 1;">
+                                            <h5 class="card-title text-truncate custom-column" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                ${item.nome_tenda}
+                                            </h5>
+                                            <p class="card-text m-0">
+                                                <i class="fa-solid fa-star" style="color: #fcbb00;"></i>
+                                                <span style="text-decoration: none; color: #fcbb00; font-size: .85rem; font-weight: 700;">
+                                                    ${item.media_avaliacoes}
+                                                </span>
+                                                <span class="mx-1">•</span>
+                                                <span style="font-size: .85rem">${item.tipo_usuario}</span>
+                                            </p>
+                                            <p class="card-text" style="font-size: .80rem">
+                                                <span>${item.tmp_entrega.min}-${item.tmp_entrega.max} Min</span>
+                                                <span class="mx-1">•</span>
+                                                <span style="${style}">${item.tx_entrega}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        `;
+                        itemsContainer.appendChild(itemDiv);
+                    });
+                }
+
+                if (data.pages > pageNumber) {
+                    document.querySelector('#load-more').style.display = 'block';
+                } else {
+                    document.querySelector('#load-more').style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao carregar os itens:', error);
+                alert('Erro ao carregar os itens. Tente novamente mais tarde.');
+            });
+    }
+
+    carregarItens();
+
+    document.getElementById('search-bar').addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+            performSearch();
+        }
+    });
+
+    document.getElementById('search-btn').addEventListener('click', function () {
+        performSearch();
+    });
+
+    document.querySelector('#load-more').addEventListener('click', () => {
+        pageNumber++;
+        carregarItens();
+    });
+</script>
 {% endblock %}

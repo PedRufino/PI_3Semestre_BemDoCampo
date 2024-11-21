@@ -3,7 +3,9 @@ from mongoengine import (
     EmbeddedDocument, 
     DateTimeField, 
     StringField, 
+    FloatField,
     DateField, 
+    DictField,
     ListField, 
     IntField, 
     Document, 
@@ -23,10 +25,20 @@ class FormaPagamento(EmbeddedDocument):
     documento = StringField(max_length=20, required=True)
     cvc = IntField(required=True)
 
+
+TIPOS_USUARIOS = {
+    ('consumidor', 'Consumidor'),
+    ('agricultor', 'Agricultor'),
+    ('pecuarista', 'Pecuarista'),
+    ('cultivador', 'Cultivador'),
+    ('comerciante', 'Comerciante'),
+}
+
 class Usuarios(Document):
     user_id = IntField(unique=True, required=True)
     nome = StringField(max_length=100, required=True)
     sobrenome = StringField(max_length=100, required=True)
+    nome_tenda = StringField(max_length=100, required=True)
     email = StringField(max_length=100, required=True)
     documento = StringField(max_length=20, required=True)
     contato = StringField(max_length=20, required=True)
@@ -38,11 +50,19 @@ class Usuarios(Document):
     cidade = StringField(max_length=100, required=True)
     estado = StringField(max_length=2, required=True)
     imagem_perfil = StringField(blank=True)
+    tipo_usuario = StringField(choices=TIPOS_USUARIOS, default='consumidor', required=False)
+    tx_entrega = FloatField(default=0.0, required=False)
+    tempo_entrega = DictField(required=False)
     formas_pagamento = ListField(EmbeddedDocumentField(FormaPagamento), required=False)
     data_cadastro = DateTimeField(default=DATE_NOW)
+    avaliacoes_estrelas = DictField(field=IntField(), required=False)
+    media_avaliacoes = FloatField(default=0.0, required=False)
 
     meta = {
-        'collection': 'usuarios'
+        'collection': 'usuarios',
+        'indexes': [
+            {'fields': ['nome_tenda'], 'default_language': 'portuguese'}
+        ]
     }
 
     def __str__(self):

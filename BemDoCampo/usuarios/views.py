@@ -8,6 +8,7 @@ from django.shortcuts import (
 
 from .imagens import MediaRecords
 from django.views import View
+from random import randint
 from . import models
 from . import forms
 import uuid
@@ -29,7 +30,9 @@ class ProfileView(View):
             
             user_data = self.session_user(request)
             user_data.update({
+                'nome_tenda': user.nome_tenda,
                 'documento': user.documento,
+                'tipo_usuario': user.tipo_usuario,
                 'contato': user.contato,
                 'data_nascimento': f"{user.data_nascimento:%d/%m/%Y}",
                 'cep': user.cep,
@@ -38,9 +41,11 @@ class ProfileView(View):
                 'bairro': user.bairro,
                 'cidade': user.cidade,
                 'estado': user.estado,
+                'tx_entrega': user.tx_entrega,
                 'imagem_perfil': user.imagem_perfil
             })
-        except:
+        except Exception as e:
+            print(e)
             user_data = self.session_user(request)
 
         return render(request, self.template_name, context={'user_data': user_data, 'paths':paths, 'form': forms.ProfileForm(user_data)})
@@ -66,20 +71,26 @@ class ProfileView(View):
 
             usuario_atualizado = models.Usuarios.objects(user_id=user_id).first()
             
+            number = [randint(5, 95), randint(5, 95)]
+            tmp_entrega = {"min": min(number), "max": max(number)}
+            
             if usuario_atualizado:
-                self.update_usuario(form, usuario_atualizado, image_path)
+                self.update_usuario(form, usuario_atualizado, image_path, tmp_entrega)
             else:
-                novo_usuario = self.create_usuario(form, user_id, image_path)
+                novo_usuario = self.create_usuario(form, user_id, image_path, tmp_entrega)
                 novo_usuario.save(using='mongo')
 
             return redirect('dashboard')
 
         return render(request, self.template_name)
 
-    def update_usuario(self, form, usuario, image_path):
+    def update_usuario(self, form, usuario, image_path, tmp_entrega):
         novos_dados = {
             'nome': form.cleaned_data.get('nome', usuario.nome),
             'sobrenome': form.cleaned_data.get('sobrenome', usuario.sobrenome),
+            'nome_tenda': form.cleaned_data.get('nome_tenda', usuario.nome_tenda),
+            'tx_entrega': form.cleaned_data.get('tx_entrega', usuario.tx_entrega),
+            'tempo_entrega': tmp_entrega,
             'email': form.cleaned_data.get('email', usuario.email),
             'documento': form.cleaned_data.get('documento', usuario.documento),
             'contato': form.cleaned_data.get('contato', usuario.contato),
@@ -95,10 +106,13 @@ class ProfileView(View):
 
         models.Usuarios.objects(user_id=usuario.user_id).update(**novos_dados)
 
-    def create_usuario(self, form, user_id, image_path):
+    def create_usuario(self, form, user_id, image_path, tmp_entrega):
         return models.Usuarios(
             user_id=user_id,
             nome=form.cleaned_data.get('nome', ''),
+            nome_tenda=form.cleaned_data.get('nome_tenda', ''),
+            tx_entrega=form.cleaned_data.get('tx_entrega', ''),
+            tempo_entrega=tmp_entrega,
             sobrenome=form.cleaned_data.get('sobrenome', ''),
             email=form.cleaned_data.get('email', ''),
             documento=form.cleaned_data.get('documento', ''),

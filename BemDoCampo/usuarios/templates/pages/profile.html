@@ -25,7 +25,11 @@
               {{ user_data.nome }} {{ user_data.sobrenome }}
             </h5>
             <p class="mb-0 font-weight-bold text-sm">
-              Consumidor
+              {% if user_data.tipo_usuario %}
+                {{ user_data.tipo_usuario|capfirst }}
+              {% else %}
+                Consumidor
+              {% endif %}
             </p>
           </div>
         </div>
@@ -56,6 +60,18 @@
                         {{ form.sobrenome.label_tag }}
                         {{ form.sobrenome }}
                     </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                      {{ form.nome_tenda.label_tag }}
+                      {{ form.nome_tenda }}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                      {{ form.tx_entrega.label_tag }}
+                      {{ form.tx_entrega }}
+                  </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
@@ -142,7 +158,8 @@
     mask_contato('#tel-input');
     mask_date('#date-input');
     mask_cep('#cep-input');
-    busca_cep('#cep-input')
+    mask_money('#money-input');
+    busca_cep('#cep-input');
   });
 </script>
 {% endblock %}
