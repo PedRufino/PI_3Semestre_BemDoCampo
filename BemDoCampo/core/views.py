@@ -30,9 +30,9 @@ class IndexView(View):
 
             if usuario:
                 dados = {
-                    'tempo_entrega': f"{usuario.get('tempo_entrega').get('min')}-{usuario.get('tempo_entrega').get('max')}",
-                    'media_avaliacoes': usuario.get('media_avaliacoes'),
-                    'tx_entrega': usuario.get('tx_entrega'),
+                    'tempo_entrega': f"{usuario['minha_tenda'].get('tempo_entrega').get('min')}-{usuario['minha_tenda'].get('tempo_entrega').get('max')}",
+                    'media_avaliacoes': usuario['minha_tenda'].get('media_avaliacoes'),
+                    'tx_entrega': usuario['minha_tenda'].get('tx_entrega'),
                 }
 
             produtos_favoritos.append({
@@ -42,8 +42,6 @@ class IndexView(View):
                 'user': dados,
             })
         
-        print(produtos_favoritos)
-
         return produtos_favoritos
 
 
@@ -70,7 +68,7 @@ class TendasListView(View):
     db = mongoengine.connection.get_db()
     
     def get(self, request, page_number=1):
-        tendas = list(self.db.usuarios.find())
+        tendas = list(self.db.usuarios.find({'tipo_usuario': {'$ne': 'consumidor'}}))
         
         if request.GET.get('filtro', False):
             tendas = self.aplicar_filtros(request)
@@ -91,23 +89,23 @@ class TendasListView(View):
         return JsonResponse({"erro": False, "items": items_data, "pages": paginator.num_pages})
     
     def aplicar_filtros(self, request):
-        filtros = {}
+        filtros = {'tipo_usuario': {'$ne': 'consumidor'}}
         orders = []
 
         if request.GET.get('descAvaliacao', False):
             descAvaliacao = request.GET['descAvaliacao']
             if 'true' in descAvaliacao:
-                orders.append(('media_avaliacoes', -1))
+                orders.append(('minha_tenda.media_avaliacoes', -1))
         
         if request.GET.get('tempoEntrega', False):
             tempoEntrega = request.GET['tempoEntrega']
             if 'true' in tempoEntrega:
-                orders.append(('tempo_entrega', 1))
+                orders.append(('minha_tenda.tempo_entrega', 1))
         
         if request.GET.get('taxaEntrega', False):
             taxaEntrega = request.GET['taxaEntrega']
             if 'true' in taxaEntrega:
-                orders.append(('tx_entrega', 1))
+                orders.append(('minha_tenda.tx_entrega', 1))
         
         if request.GET.get('filterBy', ''):
             filter_by = request.GET['filterBy']
@@ -115,12 +113,12 @@ class TendasListView(View):
         
         if request.GET.get('search', ''):
             search = request.GET['search']
-            filtros['nome_tenda'] = {"$regex": f"^{search}", "$options": "i"}
+            filtros['minha_tenda.nome_tenda'] = {"$regex": f"^{search}", "$options": "i"}
         
         if request.GET.get('entregaGratis', False):
             entregaGratis = request.GET['entregaGratis']
             if 'true' in entregaGratis:
-                filtros['tx_entrega'] = 0
+                filtros['minha_tenda.tx_entrega'] = 0
 
         query = self.db.usuarios.find(filtros)
 
@@ -133,18 +131,18 @@ class TendasListView(View):
         item = []
         for tenda in tendas:
             if tenda:
-                if not tenda['tx_entrega']:
+                if not tenda['minha_tenda']['tx_entrega']:
                     valor = "Grátis"
                 else:
-                    valor = locale.currency(tenda['tx_entrega'], grouping=True)
+                    valor = locale.currency(tenda['minha_tenda']['tx_entrega'], grouping=True)
                     
                 item.append({
                     "user_id": tenda['user_id'],
-                    "nome_tenda": tenda['nome_tenda'].title(),
+                    "nome_tenda": tenda['minha_tenda']['nome_tenda'].title(),
                     "tx_entrega": valor,
-                    "tmp_entrega": tenda['tempo_entrega'],
+                    "tmp_entrega": tenda['minha_tenda']['tempo_entrega'],
                     "tipo_usuario": tenda['tipo_usuario'].title(),
-                    "media_avaliacoes": tenda['media_avaliacoes'],
-                    "imagem_perfil": tenda['imagem_perfil'],
+                    "media_avaliacoes": tenda['minha_tenda']['media_avaliacoes'],
+                    "imagem_perfil": tenda['minha_tenda']['imagem_tenda'],
                 })
         return item

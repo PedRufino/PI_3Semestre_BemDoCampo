@@ -80,8 +80,7 @@
                             </h4>
                         </div>
                         <div class="col-12">
-                            <div class="carousel"
-                                data-flickity='{ "wrapAround": true, "autoPlay": 8000, "pageDots": false }'>
+                            <div class="carousel" data-flickity='{ "wrapAround": false,  "groupCells": true, "contain": true, "autoPlay": 7000, "pageDots": false}'>
                                 {% for prod in produtos %}
                                 <a href="#" class="btn-card btn-a carousel-cell shadow-sm mx-2 my-2 bg-body-tertiary rounded text-center"
                                     style="width: 180px;">
@@ -481,7 +480,7 @@
                 if (data.erro) {
                     document.getElementById('items-container').classList.add("justify-content-center");
                     let itemDiv = document.createElement('div');
-                    itemDiv.classList.add('col', 'text-center');
+                    itemDiv.classList.add('col', 'text-center', 'mb-3');
                     itemDiv.innerHTML = `
                             <h5 class="font-weight-bolder mb-0" style="color: #CC3300;">
                                 ${data.msg}

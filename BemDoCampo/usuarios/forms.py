@@ -26,22 +26,6 @@ class ProfileForm(forms.Form):
         'placeholder': 'Snow',
         'id': 'lastname-input'
     }))
-    nome_tenda = forms.CharField(max_length=100, label="Nome da Tenda", widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Fazenda São Pedro ou Bia Hortifruti ',
-        'id': 'tenda-input'
-    }))
-    tx_entrega = forms.DecimalField(
-        label="Taxa de Entrega",
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': '4.99',
-            'step':'0.01',
-            'id': 'money-input'
-        }),
-        max_digits=10,
-        decimal_places=2
-    )
     email = forms.EmailField(max_length=100, label="Email", widget=forms.EmailInput(attrs={
         'class': 'form-control',
         'placeholder': '@example.com',
@@ -165,3 +149,84 @@ class PaymentsForm(forms.Form):
             for field in self.fields:
                 if field in self.payment_data:
                     self.fields[field].initial = self.payment_data[field]
+
+
+class MyTendaForm(forms.Form):
+    nome_tenda = forms.CharField(max_length=100, label="Nome da Tenda", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Fazenda São Pedro ou Bia Hortifruti ',
+        'id': 'tenda-input'
+    }))
+    tx_entrega = forms.DecimalField(
+        label="Taxa de Entrega",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': '4.99',
+            'step':'0.01',
+            'id': 'money-input'
+        }),
+        max_digits=10,
+        decimal_places=2
+    )
+    email = forms.EmailField(max_length=100, label="Email", widget=forms.EmailInput(attrs={
+        'class': 'form-control',
+        'placeholder': '@example.com',
+        'id': 'email-input'
+    }))
+    documento = forms.CharField(max_length=20, label="Documento", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'maxlength': '14',
+        'placeholder': 'CPF / CNPJ',
+        'id': 'document-input'
+    }))
+    contato = forms.CharField(max_length=20, label="Contato", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'maxlength': '14',
+        'placeholder': '(00) 00000-0000',
+        'id': 'tel-input'
+    }))
+    cep = forms.CharField(max_length=10, label="CEP", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'maxlength': '8',
+        'placeholder': '00000-000',
+        'id': 'cep-input'
+    }))
+    endereco = forms.CharField(max_length=100, label="Endereço", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Rua Jacinto Pinto',
+        'id': 'logradouro-input'
+    }))
+    numero = forms.IntegerField(label="Número", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'placeholder': '69',
+        'id': 'num-endereco-input'
+    }))
+    bairro = forms.CharField(max_length=100, label="Bairro", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'São João da Gala',
+        'id': 'bairro-input'
+    }))
+    cidade = forms.CharField(max_length=100, label="Cidade", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Cubatão',
+        'id': 'cidade-input'
+    }))
+    estado = forms.CharField(max_length=2, label="Estado", widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'maxlength': '2',
+        'placeholder': 'SP',
+        'id': 'estado-input'
+    }))
+    imagem_tenda = forms.FileField(label="Imagem Para Tenda:", required=False, widget=forms.FileInput(attrs={
+        'class': 'form-control',
+        'id': 'inputGroupFile04',
+        'aria-describedby': 'inputGroupFileAddon04',
+        'aria-label': 'Upload'
+    }))
+    
+    def __init__(self, *args, user_data=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if isinstance(user_data, dict):
+            for field in self.fields:
+                if field in user_data:
+                    self.fields[field].initial = user_data[field]

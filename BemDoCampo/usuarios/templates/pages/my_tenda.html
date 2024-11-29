@@ -11,11 +11,9 @@
     <div class="card card-body blur shadow-blur mx-4 mt-n6 overflow-hidden">
       <div class="row gx-4">
         <div class="col-auto">
-          <div class="avatar avatar-xl position-relative">
-            {% if user_data.imagem_google %}
-              <img src="{{ user_data.imagem_google }}" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
-            {% elif user_data.imagem_perfil %}
-              <img src="/media/{{ user_data.imagem_perfil }}" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+          <div class="position-relative" style="width: 200px; height: 113px;">
+            {% if minha_tenda.imagem_tenda %}
+              <img src="/media/{{ minha_tenda.imagem_tenda }}" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
             {% else %}
               <img src="/media/NoPhotoUser.png" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
             {% endif %}
@@ -23,16 +21,20 @@
         </div>
         <div class="col-auto my-auto">
           <div class="h-100">
-            <h5 class="mb-1">
-              {{ user_data.nome }} {{ user_data.sobrenome }}
-            </h5>
-            <p class="mb-0 font-weight-bold text-sm">
-              {% if user_data.tipo_usuario %}
-                {{ user_data.tipo_usuario|capfirst }}
+            <span style="font-size: 36px; font-weight: 600; color: #344767;">
+              {{ minha_tenda.nome_tenda }}
+              <span class=""></span>
+              <i class="fa-solid fa-star" style="color: #fcbb00; font-size: 1rem;">
+                <span class="ms-1">{{ minha_tenda.media_avaliacoes }}</span>
+              </i>
+            </span>
+            <h5 class="mb-0 font-weight-bold">
+              {% if minha_tenda.tipo_usuario %}
+                {{ minha_tenda.tipo_usuario|capfirst }}
               {% else %}
                 Consumidor
               {% endif %}
-            </p>
+            </h5>
           </div>
         </div>
       </div>
@@ -47,21 +49,21 @@
             <h6 class="mb-0">Informações Pessoais</h6>
           </div>
           <div class="card-body p-3">
-            <form method="POST" action="{% url 'profile' %}" enctype="multipart/form-data">
+            <form method="POST" action="{% url 'my_tenda' %}" enctype="multipart/form-data">
               {% csrf_token %}
               <div class="row">
                 {{ form.user_id }}
                 <div class="col-md-6">
-                    <div class="form-group">
-                        {{ form.nome.label_tag }}
-                        {{ form.nome }}
-                    </div>
+                  <div class="form-group">
+                      {{ form.nome_tenda.label_tag }}
+                      {{ form.nome_tenda }}
+                  </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="form-group">
-                        {{ form.sobrenome.label_tag }}
-                        {{ form.sobrenome }}
-                    </div>
+                  <div class="form-group">
+                      {{ form.tx_entrega.label_tag }}
+                      {{ form.tx_entrega }}
+                  </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
@@ -79,12 +81,6 @@
                     <div class="form-group">
                         {{ form.contato.label_tag }}
                         {{ form.contato }}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        {{ form.data_nascimento.label_tag }}
-                        {{ form.data_nascimento }}
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -123,14 +119,12 @@
                         {{ form.estado }}
                     </div>
                 </div>
-                {% if not user_data.imagem_google %}
-                  <div class="col-md-6">
-                    <div class="form-group">
-                        {{ form.imagem_perfil.label_tag }}
-                        {{ form.imagem_perfil }}
-                    </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                      {{ form.imagem_tenda.label_tag }}
+                      {{ form.imagem_tenda }}
                   </div>
-                {% endif %}
+                </div>
                 <div class="col-md-12 text-end">
                     <button type="submit" class="btn bg-gradient-info m-0">Atualizar Cadastro</button>
                 </div>
