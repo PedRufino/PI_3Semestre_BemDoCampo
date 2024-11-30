@@ -84,8 +84,11 @@
                                 {% for prod in produtos %}
                                 <a href="#" class="btn-card btn-a carousel-cell shadow-sm mx-2 my-2 bg-body-tertiary rounded text-center"
                                     style="width: 180px;">
-                                    <img class="w-100 card-img-top rounded-top-2" src="/media/NoPhotoProduct.jpg"
-                                        alt="{{ prod.nome }}">
+                                    {% if prod.imagem_capa %}
+                                        <img class="w-100 card-img-top rounded-top-2" src="/media/{{prod.imagem_capa}}" alt="{{ prod.nome }}" style="width: 180px; height: 180px; object-fit: cover;">
+                                    {% else %}
+                                        <img class="w-100 card-img-top rounded-top-2" src="/media/NoPhotoProduct.jpg" alt="{{ prod.nome }}" style="width: 180px; height: 180px; object-fit: cover;">
+                                    {% endif %}
                                     <div class="card-body p-2">
                                         <h6 class="text-center mb-1">{{ prod.nome }}</h6>
                                         <p class="card-text text-center mb-1">{{ prod.valor|formatar_moeda }}</p>

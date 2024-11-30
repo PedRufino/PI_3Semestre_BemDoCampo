@@ -1,5 +1,6 @@
 {% extends "account/base_entrance.html" %}
 {% load allauth i18n %}
+{% load static %}
 {% block head_title %}
     {% trans "Bem do Campo | Cadastro" %}
 {% endblock head_title %}
@@ -17,9 +18,9 @@
                                             <div class="col-12">
                                                 <div class="mb-4">
                                                     <div class="text-center mb-4">
-                                                        <a href="#!">
-                                                            <img src="#"
-                                                                alt="Bem Do Campo" width="175" height="57">
+                                                        <a href="{% url 'index' %}">
+                                                            <img src="{% static 'imgs/logo_horizontal.png' %}"
+                                                                alt="Bem Do Campo" width="175">
                                                         </a>
                                                     </div>
                                                     <h4 class="text-center">Seja bem-vindo!</h4>
@@ -142,7 +143,7 @@
                             </div>
                             <div class="col-12 col-md-6">
                                 <img class="img-fluid rounded-start w-100 h-100 object-fit-cover" loading="lazy"
-                                    src="https://encurtador.com.br/tPk2X" alt="Seja bem-vindo! Estamos animados para te ver por aqui!">
+                                    src="https://acailandia.ma.gov.br/arquivos/noticias/2011/e2b3151b44759f76061ac04ffdd75d09392.jpg" alt="Seja bem-vindo! Estamos animados para te ver por aqui!">
                             </div>
                         </div>
                     </div>
