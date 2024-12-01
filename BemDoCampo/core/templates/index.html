@@ -494,7 +494,6 @@
                     data.items.forEach(item => {
                         document.getElementById('items-container').classList.remove("justify-content-center");
                         let style = item.tx_entrega === "Grátis" ? "color: #40b53c; font-weight: 700;" : "";
-                        let img_tenda = item.imagem_perfil === "" ? "https://m.media-amazon.com/images/I/91Z5eKWm9aL._AC_UF894,1000_QL80_.jpg" : "/media/" + item.imagem_perfil;
                         let itemDiv = document.createElement('div');
                         itemDiv.classList.add('col', 'd-flex', 'align-items-center');
                         itemDiv.innerHTML = `
@@ -504,7 +503,7 @@
                                         <div class="flex-shrink-0" style="width: 110px; height: 96px;">
                                             <div class="ratio ratio-16x9" style="width: 100%; height: 100%;">
                                                 <img style="width: 100%; height: 100%;"
-                                                    src="${img_tenda}"
+                                                    src="/media/${item.imagem_perfil}"
                                                     class="rounded-start" alt="${item.nome_tenda}" style="object-fit: cover;">
                                             </div>
                                         </div>

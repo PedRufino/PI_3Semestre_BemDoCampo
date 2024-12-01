@@ -6,14 +6,20 @@
 
 <style>
 
-    .btn-card {
+.btn-card {
         transition: all 0.15s ease-in;
     }
-    .btn-card:hover {
+.btn-card:hover {
         box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.09), 0 2px 3px -1px rgba(0, 0, 0, 0.07);
         transform: scale(1.02);
         color: black
 }
+#modalProdutoImagem {
+    max-width: 100%;    
+    max-height: 200px;  
+    object-fit: cover;  
+}
+
 </style>
 
 {% endblock %}
@@ -46,13 +52,13 @@
     <div class="row">
         <div class="col-12 col-xl-12">
             <div class="card h-100">
-                {% comment %} <h2>{{ produtor.nome }}</h2>
-                <p>{{ produtor.descricao }}</p>
-                <p><strong>Contato:</strong> {{ produtor.contato }}</p> {% endcomment %}
                 <div class="row row-cols-1 row-cols-md-2 p-4">
                     {% for produto in produtos %}
                     <div class="col p-3 rounded-4">
-                        <a href="#" class="btn-card card btn-a">
+                        <a href="#" class="btn-card card btn-a"data-bs-toggle="modal" data-bs-target="#produtoModal"
+                        data-nome="{{ produto.nome }}" data-descricao="{{ produto.descricao }}"
+                        data-imagem="/media/{{ produto.imagem_capa }}" data-valor="{{ produto.valor|formatar_moeda }}"
+                        data-id="{{ produto.produto_id }}">
                             <div class="d-flex flex-row-reverse align-items-center">
                                 <div class="flex-shrink-0" style="width: 200px; height: 200px;">
                                     <div class="ratio ratio-16x9" style="width: 100%; height: 100%;">
@@ -80,4 +86,78 @@
         </div>
     </div>
 </div>
+<!-- Modal -->
+<div class="modal fade bd-example-modal-sm" id="produtoModal" tabindex="-1" aria-labelledby="produtoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="produtoModalLabel">Detalhes do Produto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Imagem do Produto -->
+                <div>
+                    <img id="modalProdutoImagem" class="img-fluid rounded" alt="Imagem do Produto">
+                </div>
+                <!-- Nome do Produto -->
+                <div>
+                    <p id="modalProdutoNome"></p>
+                </div>
+                <!-- Descrição do Produto -->
+                <div>
+                    <strong>Descrição:</strong>
+                    <p id="modalProdutoDescricao"></p>
+                </div>
+                <!-- Valor do Produto -->
+                <div>
+                    <strong>Valor:</strong>
+                    <p id="modalProdutoValor"></p>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <!-- Botão Comprar -->
+                <strong>Quantidade:</strong>
+                <input type="number" id="modalProdutoQuantidade" class="form-control" value="1" min="1" style="max-width: 100px;">
+                <button type="button" class="btn btn-primary" id="btnComprar">Comprar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Quando o modal for mostrado
+    $('#produtoModal').on('show.bs.modal', function (event) {
+        // Obtendo o card que foi clicado
+        var button = $(event.relatedTarget);
+        var nome = button.data('nome');
+        var descricao = button.data('descricao');
+        var imagem = button.data('imagem');
+        var valor = button.data('valor');
+        var produtoId = button.data('id');
+
+        // Preenchendo os campos do modal
+        var modal = $(this);
+        modal.find('#modalProdutoNome').text(nome);
+        modal.find('#modalProdutoDescricao').text(descricao);
+        modal.find('#modalProdutoImagem').attr('src', imagem);
+        modal.find('#modalProdutoValor').text(valor);
+        modal.find('#modalProdutoQuantidade').val(1);  // Resetando a quantidade para 1
+    });
+
+    // Quando o botão "Comprar" for clicado
+    $('#btnComprar').on('click', function() {
+        var quantidade = $('#modalProdutoQuantidade').val();
+        var produtoId = $('#produtoModal').find('[data-id]').data('id');
+        var nome = $('#modalProdutoNome').text();
+        var valor = $('#modalProdutoValor').text();
+
+        // Redirecionar para o carrinho de compras
+        var carrinhoUrl = '/pagamentos/carrinho/';
+        window.location.href = carrinhoUrl + '?produto_id=' + produtoId + '&quantidade=' + quantidade + '&valor=' + encodeURIComponent(valor);
+    });
+</script>
 {% endblock %}

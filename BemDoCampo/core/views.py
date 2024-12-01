@@ -29,11 +29,12 @@ class IndexView(View):
             dados = {}
 
             if usuario:
-                dados = {
-                    'tempo_entrega': f"{usuario['minha_tenda'].get('tempo_entrega').get('min')}-{usuario['minha_tenda'].get('tempo_entrega').get('max')}",
-                    'media_avaliacoes': usuario['minha_tenda'].get('media_avaliacoes'),
-                    'tx_entrega': usuario['minha_tenda'].get('tx_entrega'),
-                }
+                if usuario.get('minha_tenda', None):
+                    dados = {
+                        'tempo_entrega': f"{usuario['minha_tenda'].get('tempo_entrega').get('min')}-{usuario['minha_tenda'].get('tempo_entrega').get('max')}",
+                        'media_avaliacoes': usuario['minha_tenda'].get('media_avaliacoes'),
+                        'tx_entrega': usuario['minha_tenda'].get('tx_entrega'),
+                    }
 
             produtos_favoritos.append({
                 'nome': produto.get('nome'),
@@ -72,7 +73,7 @@ class TendasListView(View):
         
         if request.GET.get('filtro', False):
             tendas = self.aplicar_filtros(request)
-        
+            
         if not tendas:
             return JsonResponse({
                 'erro': True,
@@ -131,18 +132,19 @@ class TendasListView(View):
         item = []
         for tenda in tendas:
             if tenda:
-                if not tenda['minha_tenda']['tx_entrega']:
-                    valor = "Grátis"
-                else:
-                    valor = locale.currency(tenda['minha_tenda']['tx_entrega'], grouping=True)
-                    
-                item.append({
-                    "user_id": tenda['user_id'],
-                    "nome_tenda": tenda['minha_tenda']['nome_tenda'].title(),
-                    "tx_entrega": valor,
-                    "tmp_entrega": tenda['minha_tenda']['tempo_entrega'],
-                    "tipo_usuario": tenda['tipo_usuario'].title(),
-                    "media_avaliacoes": tenda['minha_tenda']['media_avaliacoes'],
-                    "imagem_perfil": tenda['minha_tenda']['imagem_tenda'],
-                })
+                if tenda.get('minha_tenda'):
+                    if not tenda['minha_tenda']['tx_entrega']:
+                        valor = "Grátis"
+                    else:
+                        valor = locale.currency(tenda['minha_tenda']['tx_entrega'], grouping=True)
+                        
+                    item.append({
+                        "user_id": tenda['user_id'],
+                        "nome_tenda": tenda['minha_tenda']['nome_tenda'].title(),
+                        "tx_entrega": valor,
+                        "tmp_entrega": tenda['minha_tenda']['tempo_entrega'],
+                        "tipo_usuario": tenda['tipo_usuario'].title(),
+                        "media_avaliacoes": tenda['minha_tenda']['media_avaliacoes'],
+                        "imagem_perfil": tenda['minha_tenda'].get('imagem_tenda', 'NoPhotoUser.png'),
+                    })
         return item

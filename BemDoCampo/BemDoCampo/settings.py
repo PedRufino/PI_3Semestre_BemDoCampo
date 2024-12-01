@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'produtos',
     'fontawesomefree',
     'tenda',
+    'pagamentos',
     
     # AllAuth
     'allauth',

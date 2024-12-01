@@ -13,7 +13,7 @@
         <div class="col-auto">
           <div class="position-relative" style="width: 200px; height: 113px;">
             {% if minha_tenda.imagem_tenda %}
-              <img src="/media/{{ minha_tenda.imagem_tenda }}" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+              <img src="/media/{{ minha_tenda.imagem_tenda }}" alt="profile_image" class="border-radius-lg shadow-sm" style="width: 200px; object-fit: cover; height: 113px;">
             {% else %}
               <img src="/media/NoPhotoUser.png" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
             {% endif %}
