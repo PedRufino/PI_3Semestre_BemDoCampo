@@ -1,0 +1,196 @@
+{% extends "layouts/default_index.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block head %}
+<style>
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+</style>
+{% endblock %}
+
+{% block title %}Carrinho de Compras{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <h3>Carrinho de Compras</h3>
+    <div class="card">
+        <div class="card-body">
+            <table id="datatable-basic" class="table align-items-center mb-0">
+                <thead>
+                    <tr>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                            Nome
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            Tipo
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            Quantidade
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            Preço Unitário
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            Preço Total
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            Unidade de Medida
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            Ações
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for produto in items.produtos %}
+                        <tr id="item-{{produto.id}}">
+                            <td>
+                                <div class="align-middle text-center text-sm">
+                                    <img src="/media/NoPhotoProduct.jpg" alt="{{ produto.nome }}" class="avatar avatar-sm me-3">
+                                </div>
+                            </td>
+                            <td class="align-middle">
+                                <p class="text-secondary text-xs font-weight-bold">
+                                    {{produto.nome}}
+                                </p>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">
+                                    {{ produto.tipo }}
+                                </span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <input type="number" id="qtdProd" oninput="atualizarValor(this)" class="text-center" value="1" min="1" style="max-width: 60px;">
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold valorUnitario" data-unitario="{{ produto.preco }}">
+                                    {{ produto.preco|formatar_moeda }}
+                                </span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold valorTotal" data-unitario="{{ produto.preco }}">
+                                    {{ produto.preco|formatar_moeda }}
+                                </span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">
+                                    {{ produto.unidade_medida }}
+                                </span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <a href="#" class="btn btn-outline-danger btn-sm">Apagar</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-center" style="color: black;">
+                <div class="h4 py-3 my-4 border-bottom">
+                    <span class="px-">Quantidade de itens: 
+                        <strong class="px-1">
+                            {{ items.quantidade }}
+                        </strong>
+                    </span>
+                    <span class="px-2">Valor total: 
+                        <strong class="px-1 totalCarrinho">
+                            {{ items.total|formatar_moeda }}
+                        </strong>
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Endereço de entrega -->
+            <div class="form-group">
+                <label for="endereco">Endereço de Entrega:</label>
+                <input type="text" id="endereco" class="form-control" placeholder="Digite seu endereço" required>
+            </div>
+
+            <!-- Prazo de entrega -->
+            <div class="form-group">
+                <label for="prazo">Prazo de Entrega:</label>
+                <input type="text" id="prazo" class="form-control" placeholder="Exemplo: 3 dias úteis" disabled>
+            </div>
+
+            <!-- Valor do frete -->
+            <div class="form-group">
+                <label for="frete">Valor do Frete:</label>
+                <input type="text" id="frete" class="form-control" placeholder="Valor do frete" disabled>
+            </div>
+
+            <!-- Opções de pagamento -->
+            <div class="form-group">
+                <label for="pagamento">Forma de Pagamento:</label>
+                <select class="form-control" id="pagamento">
+                    <option value="saldo">Saldo</option>
+                    <option value="pix">Pix</option>
+                    <option value="credito">Saldo Crédito</option>
+                </select>
+            </div>
+
+            <!-- CPF -->
+            <div class="form-group">
+                <label for="cpf">CPF:</label>
+                <input type="text" id="cpf" class="form-control" placeholder="Digite seu CPF" required>
+            </div>
+
+            <!-- Botão para concluir a compra -->
+            <button type="button" class="btn btn-primary" id="finalizarCompra">Finalizar Compra</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Lógica para concluir a compra
+    $('#finalizarCompra').on('click', function() {
+        var endereco = $('#endereco').val();
+        var prazo = $('#prazo').val();
+        var frete = $('#frete').val();
+        var pagamento = $('#pagamento').val();
+        var cpf = $('#cpf').val();
+
+        // Enviar os dados para o backend ou redirecionar para a página de confirmação de compra
+        alert("Compra realizada com sucesso!\nEndereço: " + endereco + "\nPagamento: " + pagamento);
+        // Exemplo de redirecionamento
+        // window.location.href = '/confirmacao-compra/';
+    });
+</script>
+
+<script>
+    function atualizarTotalCarrinho() {
+        var totalCarrinho = 0;
+        // Itera sobre todos os itens da tabela e soma os valores
+        document.querySelectorAll('.valorTotal').forEach(function(valorTotalElemento) {
+            var valorTotal = parseFloat(valorTotalElemento.textContent.replace('R$ ', '').replace('.', '').replace(',', '.'));
+            totalCarrinho += valorTotal;
+        });
+    
+        // Exibe o valor total do carrinho
+        var totalFormatado = totalCarrinho.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.querySelector('.totalCarrinho').textContent = 'R$ ' + totalFormatado;
+    }
+    
+    function atualizarValor(input) {
+        var tr = input.closest('tr');
+        var valorUnitario = parseFloat(tr.querySelector('.valorUnitario').getAttribute("data-unitario"));
+        var quantidade = parseInt(input.value, 10);
+    
+        var valorTotal = quantidade * valorUnitario;
+    
+        var valorFormatado = valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    
+        tr.querySelector('.valorTotal').textContent = 'R$ ' + valorFormatado;
+
+        atualizarTotalCarrinho()
+        atualizarResumo()
+    }
+</script>
+{% endblock %}
