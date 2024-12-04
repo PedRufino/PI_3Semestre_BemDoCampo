@@ -1,7 +1,7 @@
 {% extends "layouts/default_dashboard.html" %}
 {% load static %}
 
-{% block title %}Soft UI Dashboard by Creative Tim{% endblock %}
+{% block title %}Formas de Pagamento{% endblock %}
 
 {% block body %}
   <div class="container-fluid py-4">
@@ -144,11 +144,15 @@
                             data-document="{{ payment.documento }}"
                             data-bs-toggle="modal" 
                             data-bs-target="#modal-form">
+                            <i class="fa-solid fa-pencil"></i>
                             Editar
                           </a>
                           <form action="{% url 'payment_delete' payment.id_cartao %}" method="post" style="display:inline;">
                               {% csrf_token %}
-                              <button type="submit"class="text-uppercase font-weight-bold btn btn-link p-0 m-0" style="color: #EA0606; font-size: 15px; ">Deletar</button>
+                              <button type="submit"class="text-uppercase font-weight-bold btn btn-link p-0 m-0" style="color: #EA0606; font-size: 15px; ">
+                                <i class="fa-solid fa-trash"></i>
+                                Deletar
+                              </button>
                           </form>
                         </div>
                     </li>

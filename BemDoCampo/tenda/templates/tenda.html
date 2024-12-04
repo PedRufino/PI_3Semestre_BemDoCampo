@@ -5,44 +5,58 @@
 {% block head %}
 
 <style>
-
-.btn-card {
+    .btn-card {
         transition: all 0.15s ease-in;
     }
-.btn-card:hover {
+
+    .btn-card:hover {
         box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.09), 0 2px 3px -1px rgba(0, 0, 0, 0.07);
         transform: scale(1.02);
         color: black
-}
-#modalProdutoImagem {
-    max-width: 100%;    
-    max-height: 200px;  
-    object-fit: cover;  
-}
+    }
 
+    #modalProdutoImagem {
+        max-width: 100%;
+        max-height: 200px;
+        object-fit: cover;
+    }
 </style>
 
 {% endblock %}
 
-{% block title %}Tenda | {{ produtor.nome | title }}{% endblock %}
+{% block title %}Tenda | {{ produtor.minha_tenda.nome_tenda | title }}{% endblock %}
 
 {% block body %}
 <div class="container-fluid">
-    <div class="page-header min-height-100 border-radius-xl mt-4">
-        <span class="mask bg-gradient-primary opacity-6"></span>
+    <div class="page-header min-height-100 border-radius-xl mt-4" style="height: 250px; object-fit: cover;">
+        <span class="mask bg-gradient-primary opacity-6">
+            <img style="object-fit: cover;" src="https://www.lojadomecanico.com.br/blog/wp-content/uploads/2024/01/como-fazer-horta-em-casa-topo.jpg" alt="" srcset="">
+        </span>
     </div>
     <div class="card card-body blur shadow-blur mx-4 mt-n6 overflow-hidden">
         <div class="row gx-4">
             <div class="col-auto">
-                <div class="avatar avatar-xl position-relative">
-                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="50" height="50" x="0" y="0" viewBox="0 0 26 26" style="enable-background:new 0 0 512 512" xml:space="preserve" class=""><g><path d="M18.139 20.061 13 16.195l-5.033 3.863-2.925-1.715v1.871L13 25.475l7.977-5.225v-1.876zM26 5.38 18.326.525 13 4.905l7.965 4.63z" style="" fill="#334666" data-original="#030104" opacity="1" class=""></path><path d="m0 13.81 7.896 4.63L13 14.522l-7.562-4.81zM7.896.525 0 5.618l5.438 4.094L13 4.905zM13 14.522l5.207 3.918L26 13.81l-5.035-4.275z" style="" fill="#334666" data-original="#030104" opacity="1" class=""></path></g></svg>
+                <div class="position-relative" style="width: 200px; height: 113px;">
+                    {% if produtor.minha_tenda.imagem_tenda %}
+                    <img src="/media/{{ produtor.minha_tenda.imagem_tenda }}" alt="profile_image"
+                        class="border-radius-lg shadow-sm" style="width: 200px; object-fit: cover; height: 113px;">
+                    {% else %}
+                    <img src="/media/NoPhotoUser.png" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+                    {% endif %}
                 </div>
             </div>
-            <div class="col-auto my-auto p-0">
+            <div class="col-auto my-auto">
                 <div class="h-100">
-                    <h3 class="mb-1">
-                        Cadastro de Produtos
-                    </h3>
+                    <span style="font-size: 36px; font-weight: 600; color: #344767;">
+                        {{ produtor.minha_tenda.nome_tenda }}
+                        <span class=""></span>
+                        <i class="fa-solid fa-star" style="color: #fcbb00; font-size: 1rem;">
+                            <span class="ms-1">{{ produtor.minha_tenda.media_avaliacoes }}</span>
+                        </i>
+                    </span>
+                    <h5 class="mb-0 font-weight-bold">
+                        {{ produtor.tipo_usuario|capfirst }}
+                    </h5>
                 </div>
             </div>
         </div>
@@ -52,18 +66,17 @@
     <div class="row">
         <div class="col-12 col-xl-12">
             <div class="card h-100">
-                <div class="row row-cols-1 row-cols-md-2 p-4">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 p-4">
                     {% for produto in produtos %}
                     <div class="col p-3 rounded-4">
-                        <a href="#" class="btn-card card btn-a"data-bs-toggle="modal" data-bs-target="#produtoModal"
-                        data-nome="{{ produto.nome }}" data-descricao="{{ produto.descricao }}"
-                        data-imagem="/media/{{ produto.imagem_capa }}" data-valor="{{ produto.valor|formatar_moeda }}"
-                        data-id="{{ produto.produto_id }}">
+                        <a href="#" class="btn-card card btn-a" data-bs-toggle="modal" data-bs-target="#produtoModal"
+                            data-nome="{{ produto.nome }}" data-descricao="{{ produto.descricao }}"
+                            data-imagem="/media/{{ produto.imagem_capa }}"
+                            data-valor="{{ produto.valor|formatar_moeda }}" data-id="{{ produto.produto_id }}">
                             <div class="d-flex flex-row-reverse align-items-center">
                                 <div class="flex-shrink-0" style="width: 200px; height: 200px;">
                                     <div class="ratio ratio-16x9" style="width: 100%; height: 100%;">
-                                        <img style="width: 100%; height: 100%;"
-                                            src="/media/{{ produto.imagem_capa }}"
+                                        <img style="width: 100%; height: 100%;" src="/media/{{ produto.imagem_capa }}"
                                             class="rounded-end-4" alt="{{ produto.nome }}" style="object-fit: cover;">
                                     </div>
                                 </div>
@@ -87,40 +100,57 @@
     </div>
 </div>
 <!-- Modal -->
-<div class="modal fade bd-example-modal-sm" id="produtoModal" tabindex="-1" aria-labelledby="produtoModalLabel" aria-hidden="true">
+<div class="modal fade bd-example-modal-sm" id="produtoModal" tabindex="-1" aria-labelledby="produtoModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="produtoModalLabel">Detalhes do Produto</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            <div class="modal-header justify-content-center">
+                <h5 class="modal-title" id="modalProdutoNome"></h5>
             </div>
             <div class="modal-body">
                 <!-- Imagem do Produto -->
                 <div>
-                    <img id="modalProdutoImagem" class="img-fluid rounded" alt="Imagem do Produto">
-                </div>
-                <!-- Nome do Produto -->
-                <div>
-                    <p id="modalProdutoNome"></p>
+                    <img id="modalProdutoImagem" class="img-fluid rounded" alt="Imagem do Produto" width="466">
                 </div>
                 <!-- Descrição do Produto -->
+                <hr class="horizontal dark my-3">
                 <div>
                     <strong>Descrição:</strong>
                     <p id="modalProdutoDescricao"></p>
                 </div>
-                <!-- Valor do Produto -->
-                <div>
-                    <strong>Valor:</strong>
-                    <p id="modalProdutoValor"></p>
+
+                <hr class="horizontal dark my-3">
+
+                <div class="text-center">
+                    <span style="color: #50a773; font-weight: 700;" id="modalProdutoValor"></span>
                 </div>
-                
+                <hr class="horizontal dark my-3">
+                <div class="row border p-2 mb-2 border-opacity-25 mx-auto" style="font-size: 0.80rem;">
+                    <div class="col-10">
+                        <i class="fa-solid fa-store" style="font-size: 0.80rem;"></i>
+                        {{ produtor.minha_tenda.nome_tenda | title }}
+                    </div>
+                    <div class="col-2">
+                        <i class="fa-solid fa-star" style="color: #fcbb00; font-size: 0.80rem"></i>
+                        <span style="text-decoration: none; color: #fcbb00; font-size: 0.80rem; font-weight: 700;">
+                            {{produtor.minha_tenda.media_avaliacoes}}
+                        </span>
+                    </div>
+                    <hr class="horizontal dark my-2">
+                    <div class="col-12">
+                        {{ produtor.minha_tenda.tempo_entrega.min }}-{{ produtor.minha_tenda.tempo_entrega.max }} min
+                        <span class="mx-2" style="font-size: 1rem; font-weight: 700;">•</span>
+                        R$ {{produtor.minha_tenda.tx_entrega}}
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <!-- Botão Comprar -->
-                <strong>Quantidade:</strong>
-                <input type="number" id="modalProdutoQuantidade" class="form-control" value="1" min="1" style="max-width: 100px;">
-                <button type="button" class="btn btn-primary" id="btnComprar">Comprar</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <input type="number" id="modalProdutoQuantidade" class="form-control" value="1" min="1"
+                    style="max-width: 100px;">
+                <button type="button" class="btn bg-gradient-info m-0" id="btnComprar">Adicionar
+                    <span class="ps-5" id="modalProdutoValor"></span>
+                </button>
             </div>
         </div>
     </div>
@@ -144,12 +174,13 @@
         modal.find('#modalProdutoNome').text(nome);
         modal.find('#modalProdutoDescricao').text(descricao);
         modal.find('#modalProdutoImagem').attr('src', imagem);
+        modal.find('#modalUnitarioValor').text(valor);
         modal.find('#modalProdutoValor').text(valor);
         modal.find('#modalProdutoQuantidade').val(1);  // Resetando a quantidade para 1
     });
 
     // Quando o botão "Comprar" for clicado
-    $('#btnComprar').on('click', function() {
+    $('#btnComprar').on('click', function () {
         var quantidade = $('#modalProdutoQuantidade').val();
         var produtoId = $('#produtoModal').find('[data-id]').data('id');
         var nome = $('#modalProdutoNome').text();

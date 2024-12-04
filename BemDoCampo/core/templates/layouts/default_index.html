@@ -48,6 +48,14 @@
                             <span class="nav-link-text ms-1">{{ user.first_name|title }} {{ user.last_name|title }}</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'carrinho' %}">
+                            <div class="icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="fa-solid fa-cart-shopping" style="color: #000000;"></i>
+                            </div>
+                            <span class="nav-link-text ms-1">Carrinho</span>
+                        </a>
+                    </li>
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="/accounts/login">

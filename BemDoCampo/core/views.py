@@ -145,6 +145,12 @@ class TendasListView(View):
                         "tmp_entrega": tenda['minha_tenda']['tempo_entrega'],
                         "tipo_usuario": tenda['tipo_usuario'].title(),
                         "media_avaliacoes": tenda['minha_tenda']['media_avaliacoes'],
-                        "imagem_perfil": tenda['minha_tenda'].get('imagem_tenda', 'NoPhotoUser.png'),
+                        "imagem_perfil": tenda['minha_tenda'].get('imagem_tenda') or 'NoPhotoTenda.jpg',
                     })
         return item
+
+class ReceitasDicasView(View):
+    template_name = 'receitas_dicas.html'
+    
+    def get(self, request):
+        return render(request, self.template_name)

@@ -12,14 +12,13 @@ class TendaView(View):
     db = mongoengine.connection.get_db()
 
     def get(self, request, produtor_id):
-        for user in self.produtor(produtor_id):
-            user
-        
         context = {
             'produtos': self.produtos(produtor_id),
-            'produtor': user,
-            'paths':  ['Tenda', user['nome']]
+            'produtor': self.produtor(produtor_id)[0],
+            'paths':  ['Tenda', self.produtor(produtor_id)[0]['nome']]
         }
+        
+        print(context)
         
         return render(request, self.template_name, context)
     
